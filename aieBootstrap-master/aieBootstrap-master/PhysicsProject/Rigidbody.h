@@ -11,7 +11,7 @@ public:
 	virtual void Debug() {};
 	void ApplyForce(glm::vec2 a_force);
 	void ApplyForceToOther(Rigidbody* a_otherActor, glm::vec2 a_force);
-
+	void ResolveCollision(Rigidbody* a_otherActor);
 	virtual bool CheckCollision(PhysicsObject* pOther) = 0;
 
 	glm::vec2 GetPosition() { return m_pos; }

@@ -123,9 +123,9 @@ bool PhysicsScene::Sphere2Plane(PhysicsObject* objSphere, PhysicsObject* objPlan
 		if (intersec > 0 && velOutOfPlane < 0)
 		{
 			glm::vec2 holdVel = sphere->GetVelocity();
-			sphere->ApplyForce(-holdVel * sphere->GetMass() 
-				+ glm::vec2(holdVel.x, -holdVel.y));//Gives the opposite affect of what the object will have.
-													//This now bounces
+			sphere->ApplyForce(-holdVel * sphere->GetMass()
+				+ glm::vec2(holdVel.x * 4, -holdVel.y * 4));//Gives the opposite effect of what the object will have.
+													//This now bounces in the correct movement
 			return true;
 		}
 		
@@ -134,7 +134,21 @@ bool PhysicsScene::Sphere2Plane(PhysicsObject* objSphere, PhysicsObject* objPlan
 	return false;
 }
 
-bool PhysicsScene::Sphere2Sphere(PhysicsObject*, PhysicsObject*)
+bool PhysicsScene::Sphere2Sphere(PhysicsObject* objSphere1, PhysicsObject* objSphere2)
 {
+	Sphere* sphere1 = dynamic_cast<Sphere*>(objSphere1);
+	Sphere* sphere2 = dynamic_cast<Sphere*>(objSphere2);
+
+	if (sphere1 != nullptr && sphere2 != nullptr)
+	{
+		float dist = glm::distance(sphere1->GetPosition(), sphere2->GetPosition());
+
+		float overlap = sphere1->GetRadius() + sphere2->GetRadius() - dist;
+		if (overlap > 0)
+		{
+			sphere1->ResolveCollision(sphere2);
+			return true;
+		}
+	}
 	return false;
 }

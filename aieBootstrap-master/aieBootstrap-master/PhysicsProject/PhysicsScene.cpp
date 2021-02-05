@@ -1,9 +1,20 @@
 #include "PhysicsScene.h"
 #include "PhysicsObject.h"
 #include "Rigidbody.h"
-
+#include "Sphere.h"
+#include "Plane.h"
 #include <list>
 #include <iostream>
+
+//Function pointer array for handing our collisions
+typedef bool(*fn)(PhysicsObject*, PhysicsObject*);
+
+static fn colFuncArray[] =
+{
+	PhysicsScene::Plane2Plane,  PhysicsScene::Plane2Sphere,
+	PhysicsScene::Sphere2Plane, PhysicsScene::Sphere2Sphere,
+};
+
 PhysicsScene::PhysicsScene() : m_timeStep(0.01f),  m_gravity(glm::vec2(0,0))
 {
 }
@@ -40,28 +51,7 @@ void PhysicsScene::Update(float dt)
 		}
 		accumulatedTime -= m_timeStep;
 
-		for (auto pActor : m_actors)
-		{
-			for (auto pOther : m_actors)
-			{
-				if (pActor == pOther)
-					continue;
-
-				if (std::find(objs.begin(), objs.end(), pActor) != objs.end() &&
-					std::find(objs.begin(), objs.end(), pOther) != objs.end())
-					continue;
-
-				Rigidbody* pRigid = dynamic_cast<Rigidbody*>(pActor);
-				if (pRigid->CheckCollision(pOther) == true)
-				{
-					pRigid->ApplyForceToOther(dynamic_cast<Rigidbody*>(pOther),
-						pRigid->GetVelocity()* pRigid->GetMass());
-					objs.push_back(pRigid);
-					objs.push_back(pOther);
-				}
-			}
-		}
-		objs.clear();
+		CheckCollisions();
 	}
 }
 
@@ -82,4 +72,69 @@ void PhysicsScene::DebugScene()
 		pActor->Debug();
 		count++;
 	}
+}
+
+void PhysicsScene::CheckCollisions()
+{
+	int actorCount = m_actors.size();
+	for (int outer = 0; outer < actorCount - 1; outer++)
+	{
+		for (int inner = outer + 1; inner < actorCount; inner++)
+		{
+			PhysicsObject* objOuter = m_actors[outer];
+			PhysicsObject* objInner = m_actors[inner];
+			int shapeID_out = objOuter->GetShapeID();
+			int shapeID_in = objInner->GetShapeID();
+			
+			int funcIndex = (shapeID_out * SHAPE_COUNT) + shapeID_in;
+			fn colFuncPtr = colFuncArray[funcIndex];
+			if (colFuncPtr != nullptr)
+			{
+				colFuncPtr(objOuter, objInner);
+			}
+		}
+	}
+}
+
+bool PhysicsScene::Plane2Plane(PhysicsObject*, PhysicsObject*)
+{
+	return false;
+}
+
+bool PhysicsScene::Plane2Sphere(PhysicsObject* objPlane, PhysicsObject* objSphere)
+{
+	return Sphere2Plane(objSphere, objPlane);
+}
+
+bool PhysicsScene::Sphere2Plane(PhysicsObject* objSphere, PhysicsObject* objPlane)
+{
+	Sphere* sphere = dynamic_cast<Sphere*>(objSphere);
+	Plane* plane = dynamic_cast<Plane*>(objPlane);
+
+
+	//If successful and they both have a value.
+	if (sphere != nullptr && plane != nullptr)
+	{
+		glm::vec2 colNorm = plane->GetNormal();
+		float sphereToPlane = glm::dot(sphere->GetPosition(), 
+			colNorm - plane->GetDistance());
+		float intersec = sphere->GetRadius() - sphereToPlane;//Interaction 
+		float velOutOfPlane = glm::dot(sphere->GetVelocity(), colNorm);
+		if (intersec > 0 && velOutOfPlane < 0)
+		{
+			glm::vec2 holdVel = sphere->GetVelocity();
+			sphere->ApplyForce(-holdVel * sphere->GetMass() 
+				+ glm::vec2(holdVel.x, -holdVel.y));//Gives the opposite affect of what the object will have.
+													//This now bounces
+			return true;
+		}
+		
+	}
+
+	return false;
+}
+
+bool PhysicsScene::Sphere2Sphere(PhysicsObject*, PhysicsObject*)
+{
+	return false;
 }

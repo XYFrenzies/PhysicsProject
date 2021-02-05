@@ -5,6 +5,7 @@
 #include "glm\ext.hpp"
 #include <Gizmos.h>
 #include "Sphere.h"
+#include "Plane.h"
 PhysicsProjectApp::PhysicsProjectApp() {
 
 }
@@ -28,18 +29,30 @@ bool PhysicsProjectApp::startup() {
 	m_physicsScene = new PhysicsScene();
 
 
-	m_physicsScene->SetGravity(glm::vec2(0, 0));
+	m_physicsScene->SetGravity(glm::vec2(0, -10));
 	//Lower the TimeStep value, the more accurate the simulation will be;
 	//but it will increase the processing time required. If it is
 	//too high it will cause the simulation to stutter and reduce stability.
 
 	m_physicsScene->SetTimeStep(0.01f);
 
-	Sphere* ball;
-  	ball = new Sphere(glm::vec2(40, 0), glm::vec2(10, 30), 3.0f, 1.0f,
+	Sphere* ball1;
+  	ball1 = new Sphere(glm::vec2(40, 50), glm::vec2(-30, 0), 5.0f, 6.0f,
 		glm::vec4(1, 0, 0, 1));
-	m_physicsScene->AddActor(ball);
 
+
+	Sphere* ball2;
+	ball2 = new Sphere(glm::vec2(-40, 50), glm::vec2(30, 0), 5.0f, 6.0f,
+		glm::vec4(1, 1, 0, 1));
+
+	m_physicsScene->AddActor(ball1);
+	m_physicsScene->AddActor(ball2);
+
+	ball1->ApplyForce(glm::vec2(-15, 0));
+	ball2->ApplyForce(glm::vec2(15, 0));
+
+	Plane* plane = new Plane();
+	m_physicsScene->AddActor(plane);
 	return true;
 }
 

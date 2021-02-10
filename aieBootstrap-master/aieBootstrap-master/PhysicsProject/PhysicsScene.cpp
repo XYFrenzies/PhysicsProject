@@ -201,6 +201,7 @@ bool PhysicsScene::Sphere2Sphere(PhysicsObject* objSphere1, PhysicsObject* objSp
 		float overlap = sphere1->GetRadius() + sphere2->GetRadius() - dist;
 		if (overlap > 0)
 		{
+			
 			sphere1->ResolveCollision(sphere2, 0.5f * (sphere1->GetPosition() + sphere2->GetPosition()));
 			return true;
 		}
@@ -253,7 +254,27 @@ bool PhysicsScene::Box2Sphere(PhysicsObject* objBox, PhysicsObject* objSphere)
 	return Sphere2Box(objSphere, objBox);
 }
 
-bool PhysicsScene::Box2Box(PhysicsObject*, PhysicsObject*)
+bool PhysicsScene::Box2Box(PhysicsObject* obj1, PhysicsObject* obj2)
 {
+	Box* box1 = dynamic_cast<Box*>(obj1);
+	Box* box2 = dynamic_cast<Box*>(obj2);
+
+	if (box1 != nullptr && box2 != nullptr)
+	{
+		glm::vec2 norm(0, 0);
+		glm::vec2 contact(0, 0);
+		float pen = 0;
+		int numContacts = 0;
+		box1->CheckBoxCorners(*box2, contact, numContacts, pen, norm);
+		if (box2->CheckBoxCorners(*box1, contact, numContacts, pen, norm))
+		{
+			norm = -norm;
+		}
+		if (pen > 0)
+		{
+			box1->ResolveCollision(box2, contact / float(numContacts), &norm);
+		}
+		return true;
+	}
 	return false;
 }

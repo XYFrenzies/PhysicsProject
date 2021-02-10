@@ -5,6 +5,7 @@ Box::Box(glm::vec2 a_pos, glm::vec2 a_vel, float a_rot, float a_mass, float a_wi
 	:Rigidbody(BOX, a_pos, a_vel, a_rot, a_mass), m_extents(a_width, a_height), m_localX(), m_localY()
 {
 	m_colour = glm::vec4(1, 0, 0, 1);
+	m_moment = 1.0f / 3.0f * m_mass * a_width * a_height;
 }
 
 Box::Box(glm::vec2 a_pos, glm::vec2 a_vel, float a_rot, float a_mass, float a_width, 
@@ -12,6 +13,7 @@ Box::Box(glm::vec2 a_pos, glm::vec2 a_vel, float a_rot, float a_mass, float a_wi
 	m_extents(a_width, a_height), m_localX(), m_localY()
 {
 	m_colour = a_colour;
+	m_moment = 1.0f / 3.0f * m_mass * a_width * a_height;
 }
 
 Box::~Box()
@@ -64,14 +66,10 @@ bool Box::CheckBoxCorners(const Box& a_box, glm::vec2& a_contact, int& a_numCont
 
 			//Update the extents in each cardinal direction of our box's space
 			//Extents along the seperating axes.
-			if (first || p0.x < minX)
-				minX = p0.x;
-			if (first || p0.x > maxX)
-				maxX = p0.x;
-			if (first || p0.y < minY)
-				minY = p0.y;
-			if (first || p0.y > maxY)
-				maxY = p0.y;
+			if (first || p0.x < minX) minX = p0.x;
+			if (first || p0.x > maxX) maxX = p0.x;
+			if (first || p0.y < minY) minY = p0.y;
+			if (first || p0.y > maxY) maxY = p0.y;
 
 			if(p0.x > -m_extents.x && p0.x <= m_extents.x && 
 				p0.y > -m_extents.y && p0.y <= m_extents.y)	
@@ -79,15 +77,15 @@ bool Box::CheckBoxCorners(const Box& a_box, glm::vec2& a_contact, int& a_numCont
 				numLocalContacts++;
 				localContact += p0;
 			}
-			return false;
+			first = false;
 		}
 	}
 
 	//If we lie entirely to one side of the box along one axis, we've found a seperating
 	// axis, and we can exit
 
-	if (maxX <= m_extents.x || minX >= m_extents.x || maxY <= m_extents.x 
-		|| minY >= m_extents.x)
+	if (maxX <= -m_extents.x || minX >= m_extents.x || maxY <= -m_extents.y 
+		|| minY >= m_extents.y)
 		return false;
 	if (numLocalContacts == 0)
 		return false;

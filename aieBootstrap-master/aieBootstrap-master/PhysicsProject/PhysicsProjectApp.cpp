@@ -58,45 +58,6 @@ void PhysicsProjectApp::update(float deltaTime) {
 	m_physicsScene->Update(deltaTime);
 	m_physicsScene->Draw();
 
-	//static const  glm::vec4 colours[] =
-	//{
-	//	glm::vec4(1, 0, 0, 1), glm::vec4(0, 1, 0, 1),
-	//	glm::vec4(0, 0, 1, 1), glm::vec4(0.8f, 0, 0.5f, 1),
-	//	glm::vec4(0, 1, 1, 1)
-	//};
-
-	//static const int rows = 5;
-	//static const int columns = 10;
-	//static const int hSpace = 1;
-	//static const int vSpace = 1;
-
-	//static const glm::vec2 scrExtents(100, 50);
-	//static const glm::vec2 boxExtents(7, 3);
-	//static const glm::vec2 startPos
-	//(
-	//	-(columns >> 1)*((boxExtents.x * 2) + vSpace) + 
-	//		boxExtents.x + (vSpace / 2.0f), scrExtents.y - 
-	//		((boxExtents.y* 2) + hSpace)
-	//);
-
-	////Draw Blocks
-
-	//glm::vec2 pos;
-	//for (size_t y = 0; y < rows; y++)
-	//{
-	//	pos = glm::vec2(startPos.x, startPos.y -
-	//		(y * ((boxExtents.y * 2) + hSpace)));
-	//	for (size_t x = 0; x < columns; x++)
-	//	{
-	//		aie::Gizmos::add2DAABBFilled(pos, boxExtents, colours[y]);
-	//		pos.x += (boxExtents.x * 2) + vSpace;
-	//	}
-	//}
-
-
-	//aie::Gizmos::add2DCircle(glm::vec2(0, -35), 3, 12, glm::vec4(1, 1, 0, 1));
-
-	//aie::Gizmos::add2DAABBFilled(glm::vec2(0, -40), glm::vec2(12, 2), glm::vec4(1, 0, 1, 1));
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
@@ -127,12 +88,15 @@ void PhysicsProjectApp::DrawRect()
 {
 	m_physicsScene->AddActor(new Sphere(glm::vec2(10, 10), glm::vec2(-10, -17),
 		1, 3, glm::vec4(1, 0, 0, 1)));
-	m_physicsScene->AddActor(new Sphere(glm::vec2(30, 10), glm::vec2(-10, -17),
-		1, 3, glm::vec4(1, 0, 0, 1)));
 	m_physicsScene->AddActor(new Plane({ -0.65, 0.75},-25));
 
-	Box* box1 = new Box(glm::vec2(-10, 0), glm::vec2(16, 4), 1, 4, 8, 4, glm::vec4(1, 0, 0, 1));
-	Box* box2 = new Box(glm::vec2(10, 0), glm::vec2(16, 4), 1, 4, 8, 4, glm::vec4(1, 0, 0, 1));
+	Sphere* sphere1 = new Sphere(glm::vec2(30, 10), glm::vec2(-10, -17),
+		1, 3, glm::vec4(1, 0, 1, 0));
+	sphere1->SetKinematic(true);
+	m_physicsScene->AddActor(sphere1);
+
+	Box* box1 = new Box(glm::vec2(0, 0), glm::vec2(16, 4), 1, 4, 8, 4, glm::vec4(1, 0, 1, 1));
+	Box* box2 = new Box(glm::vec2(15, 0), glm::vec2(16, 4), 1, 4, 8, 4, glm::vec4(1, 1, 0, 1));
 
 	box1->SetRotation(0.5f);
 	box2->SetRotation(0.75f);

@@ -8,7 +8,8 @@ Rigidbody::Rigidbody(ShapeType a_shapeID, glm::vec2 a_pos,
 	m_mass = a_mass;
 	m_rot = a_rot;
 	m_angVel = 0;
-
+	m_isKinematic = false;
+	m_elasticity = 0.8f;
 }
 
 Rigidbody::~Rigidbody()
@@ -62,7 +63,7 @@ void Rigidbody::ResolveCollision(Rigidbody* a_otherActor,
 		float mass2 = 1.0f / (1.0f / a_otherActor->m_mass +
 			(radius2 + radius2) / a_otherActor->GetMoment());
 
-		float e = 1.0f;
+		float e = (m_elasticity + a_otherActor->GetElasticity()) / 2.0f;
 		glm::vec2 impact = (1.0f + e) * mass1 * mass2 / (mass1 + mass2) * (cp_vel1 - cp_vel2) * normal;
 
 		ApplyForce(-impact, a_contact - m_pos);

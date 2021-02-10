@@ -1,7 +1,7 @@
 #include "Plane.h"
 #include <Gizmos.h>
 #include "Rigidbody.h"
-Plane::Plane(glm::vec2 a_norm, float a_dist) : PhysicsObject(PLANE)
+Plane::Plane(glm::vec2 a_norm, float a_dist) : PhysicsObject(ShapeType::PLANE)
 {
 	m_norm = a_norm;
 	m_distToOrigin = a_dist;
@@ -10,7 +10,7 @@ Plane::Plane(glm::vec2 a_norm, float a_dist) : PhysicsObject(PLANE)
 	m_elasticity = 1.0f;
 }
 
-Plane::Plane() : PhysicsObject(PLANE)
+Plane::Plane() : PhysicsObject(ShapeType::PLANE)
 {
 	m_norm = glm::normalize(glm::vec2(0, 1));
 	m_distToOrigin = 0;

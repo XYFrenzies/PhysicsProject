@@ -4,7 +4,7 @@
 
 //This is a abstract class. It will be used as a base for the 
 //derivated classes that will use FixedUpdate
-enum ShapeType
+enum class ShapeType
 {
 	PLANE = 0,
 	SPHERE,
@@ -35,7 +35,7 @@ protected:
 	ShapeType m_shapeID;
 	bool m_isKinematic;
 	float m_elasticity;
-	PhysicsObject(ShapeType a_shapeID) : m_shapeID(a_shapeID) {}
+	PhysicsObject(ShapeType a_shapeID) : m_shapeID(a_shapeID), m_isKinematic(), m_elasticity() {}
 
 };
 

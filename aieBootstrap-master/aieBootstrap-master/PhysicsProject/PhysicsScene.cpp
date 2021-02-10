@@ -85,10 +85,10 @@ void PhysicsScene::CheckCollisions()
 		{
 			PhysicsObject* objOuter = m_actors[outer];
 			PhysicsObject* objInner = m_actors[inner];
-			int shapeID_out = objOuter->GetShapeID();
-			int shapeID_in = objInner->GetShapeID();
+			int shapeID_out = (int)objOuter->GetShapeID();
+			int shapeID_in = (int)objInner->GetShapeID();
 			
-			int funcIndex = (shapeID_out * SHAPE_COUNT) + shapeID_in;
+			int funcIndex = (shapeID_out * (int)ShapeType::SHAPE_COUNT) + shapeID_in;
 			fn colFuncPtr = colFuncArray[funcIndex];
 			if (colFuncPtr != nullptr)
 			{

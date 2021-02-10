@@ -3,6 +3,7 @@
 #include "Rigidbody.h"
 #include "Sphere.h"
 #include "Plane.h"
+#include "Box.h"
 #include <list>
 #include <iostream>
 
@@ -11,8 +12,9 @@ typedef bool(*fn)(PhysicsObject*, PhysicsObject*);
 
 static fn colFuncArray[] =
 {
-	PhysicsScene::Plane2Plane,  PhysicsScene::Plane2Sphere,
-	PhysicsScene::Sphere2Plane, PhysicsScene::Sphere2Sphere,
+	PhysicsScene::Plane2Plane,  PhysicsScene::Plane2Sphere,  PhysicsScene::Plane2Box,
+	PhysicsScene::Sphere2Plane, PhysicsScene::Sphere2Sphere, PhysicsScene::Sphere2Box,
+	PhysicsScene::Box2Plane,	PhysicsScene::Box2Sphere,    PhysicsScene::Box2Box
 };
 
 PhysicsScene::PhysicsScene() : m_timeStep(0.01f),  m_gravity(glm::vec2(0,0))
@@ -106,6 +108,55 @@ bool PhysicsScene::Plane2Sphere(PhysicsObject* objPlane, PhysicsObject* objSpher
 	return Sphere2Plane(objSphere, objPlane);
 }
 
+bool PhysicsScene::Plane2Box(PhysicsObject* objPlane, PhysicsObject* objBox)
+{
+	Plane* plane = dynamic_cast<Plane*>(objPlane);
+	Box* box = dynamic_cast<Box*>(objBox);
+
+
+	//If successful we test for collision
+	if (box != nullptr && plane != nullptr)
+	{
+		int numContacts = 0;
+		glm::vec2 contact(0, 0);
+		float contactV = 0;
+		
+		//Get a representation point on the plane
+		glm::vec2 planeOrigin = plane->GetNormal() * plane->GetDistance();
+		//Check all the corners for a collision with the plane
+		for (float x = -box->GetExtents().x; x < box->GetWidth(); x+= box->GetWidth())
+		{
+			for (float y = -box->GetExtents().y; y < box->GetHeight(); y += box->GetHeight())
+			{
+				//Get the position of the corners in world space.
+				glm::vec2 p = box->GetPosition() + x * box->GetLocalX() + y * box->GetLocalY();
+				float distFromPlane = glm::dot(p - planeOrigin, plane->GetNormal());
+				//This is the total velocity ofd the points in world space
+				glm::vec2 displacement = x * box->GetLocalX() + y * box->GetLocalY();
+				glm::vec2 pointVelocity = box->GetVelocity() + box->GetAngularVelocity() 
+					* glm::vec2(-displacement.y, displacement.x);
+				//This is the amount of the point velocity into the plane 
+				float velocityIntoPlane = glm::dot(pointVelocity, plane->GetNormal());
+				//Moving further in, we need to resolve the collision
+				if (distFromPlane < 0 && velocityIntoPlane <= 0)
+				{
+					numContacts++;
+					contact += p;
+					contactV += velocityIntoPlane;
+				}
+			}
+		}
+		//If we hit it will normall result as one or two corners touching a plane
+		if (numContacts > 0)
+		{
+			plane->ResolveCollision(box, contact / (float)numContacts);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool PhysicsScene::Sphere2Plane(PhysicsObject* objSphere, PhysicsObject* objPlane)
 {
 	Sphere* sphere = dynamic_cast<Sphere*>(objSphere);
@@ -117,14 +168,18 @@ bool PhysicsScene::Sphere2Plane(PhysicsObject* objSphere, PhysicsObject* objPlan
 	{
 		glm::vec2 colNorm = plane->GetNormal();
 		float sphereToPlane = glm::dot(sphere->GetPosition(), 
-			colNorm - plane->GetDistance());
+			colNorm) - plane->GetDistance();
 		float intersec = sphere->GetRadius() - sphereToPlane;//Interaction 
 		float velOutOfPlane = glm::dot(sphere->GetVelocity(), colNorm);
 		if (intersec > 0 && velOutOfPlane < 0)
 		{
-			glm::vec2 holdVel = sphere->GetVelocity();
+
+			glm::vec2 contact = sphere->GetPosition() + (colNorm * -sphere->GetRadius());
+			plane->ResolveCollision(sphere, contact);
+
+/*			glm::vec2 holdVel = sphere->GetVelocity();
 			sphere->ApplyForce(-holdVel * sphere->GetMass()
-				+ glm::vec2(holdVel.x * 4, -holdVel.y * 4));//Gives the opposite effect of what the object will have.
+				+ glm::vec2(holdVel.x * 4, -holdVel.y * 4));*///Gives the opposite effect of what the object will have.
 													//This now bounces in the correct movement
 			return true;
 		}
@@ -146,9 +201,59 @@ bool PhysicsScene::Sphere2Sphere(PhysicsObject* objSphere1, PhysicsObject* objSp
 		float overlap = sphere1->GetRadius() + sphere2->GetRadius() - dist;
 		if (overlap > 0)
 		{
-			sphere1->ResolveCollision(sphere2);
+			sphere1->ResolveCollision(sphere2, 0.5f * (sphere1->GetPosition() + sphere2->GetPosition()));
 			return true;
 		}
 	}
+	return false;
+}
+
+bool PhysicsScene::Sphere2Box(PhysicsObject* objSphere, PhysicsObject* objBox)
+{
+	Sphere* sphere = dynamic_cast<Sphere*>(objSphere);
+	Box* box = dynamic_cast<Box*>(objBox);
+
+	if (box != nullptr && sphere != nullptr)
+	{
+		//Transform the circle into the box's coordinate space
+		glm::vec2 circlePosWorld = sphere->GetPosition() - box->GetPosition();
+		glm::vec2 circlePosBox = glm::vec2(glm::dot(circlePosWorld, box->GetLocalX()),
+			glm::dot(circlePosWorld, box->GetLocalY()));
+
+		//Find the closest point to the circle's center on the box by clamping the
+		//coordinates in the box space to the box's extents.
+		glm::vec2 closestPointOnTheBox = circlePosBox;
+		glm::vec2 extents = box->GetExtents();
+		if (closestPointOnTheBox.x < -extents.x) closestPointOnTheBox.x = -extents.x;
+		if (closestPointOnTheBox.x > extents.x)  closestPointOnTheBox.x = extents.x;
+		if (closestPointOnTheBox.y < -extents.y) closestPointOnTheBox.y = -extents.y;
+		if (closestPointOnTheBox.y > extents.y)  closestPointOnTheBox.y = extents.y;
+
+		//Now covert it back into world coordinates.
+		glm::vec2 closestPointOnBoxWorld = box->GetPosition() + closestPointOnTheBox.x *
+			box->GetLocalX() + closestPointOnTheBox.y * box->GetLocalY();
+		glm::vec2 circleToBox = sphere->GetPosition() - closestPointOnBoxWorld;
+		if (glm::length(circleToBox) < sphere->GetRadius())
+		{
+			glm::vec2 direction = glm::normalize(circleToBox);
+			glm::vec2 contact = closestPointOnBoxWorld;
+			box->ResolveCollision(sphere, contact, &direction);
+		}
+	}
+	return false;
+}
+
+bool PhysicsScene::Box2Plane(PhysicsObject* objBox, PhysicsObject* objPlane)
+{
+	return Plane2Box(objPlane, objBox);
+}
+
+bool PhysicsScene::Box2Sphere(PhysicsObject* objBox, PhysicsObject* objSphere)
+{
+	return Sphere2Box(objSphere, objBox);
+}
+
+bool PhysicsScene::Box2Box(PhysicsObject*, PhysicsObject*)
+{
 	return false;
 }

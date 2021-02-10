@@ -23,4 +23,8 @@ protected:
 	aie::Font*			m_font;
 
 	PhysicsScene* m_physicsScene;
+
+public:
+	void DrawRect();
+	void SphereAndPlane();
 };

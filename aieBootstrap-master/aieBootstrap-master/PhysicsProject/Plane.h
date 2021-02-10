@@ -2,6 +2,7 @@
 #include "PhysicsObject.h"
 //This is a one-sided object that extgended infinitely 
 //along boith its edge and backwards from its normal direction
+class Rigidbody;
 class Plane : public PhysicsObject
 {
 public:
@@ -15,6 +16,7 @@ public:
 	virtual void ResetPosition() {};
 	virtual void MakeGizmo();
 
+	void ResolveCollision(Rigidbody* a_otherActor, glm::vec2 a_contact);
 
 	glm::vec2 GetNormal() { return m_norm; }
 	float GetDistance() { return m_distToOrigin; }

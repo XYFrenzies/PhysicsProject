@@ -2,7 +2,7 @@
 #include <Gizmos.h>
 
 Box::Box(glm::vec2 a_pos, glm::vec2 a_vel, float a_rot, float a_mass, float a_width, float a_height)
-	:Rigidbody(ShapeType::BOX, a_pos, a_vel, a_rot, a_mass), m_extents(a_width, a_height), m_localX(), m_localY()
+	:Rigidbody(ShapeType::BOX, a_pos, a_vel, a_mass, a_rot), m_extents(a_width, a_height)
 {
 	m_colour = glm::vec4(1, 0, 0, 1);
 	m_moment = 1.0f / 3.0f * m_mass * a_width * a_height;
@@ -10,7 +10,7 @@ Box::Box(glm::vec2 a_pos, glm::vec2 a_vel, float a_rot, float a_mass, float a_wi
 
 Box::Box(glm::vec2 a_pos, glm::vec2 a_vel, float a_rot, float a_mass, float a_width, 
 	float a_height, glm::vec4 a_colour) : Rigidbody(ShapeType::BOX, a_pos, a_vel, a_rot, a_mass),
-	m_extents(a_width, a_height), m_localX(), m_localY()
+	m_extents(a_width, a_height)
 {
 	m_colour = a_colour;
 	m_moment = 1.0f / 3.0f * m_mass * a_width * a_height;

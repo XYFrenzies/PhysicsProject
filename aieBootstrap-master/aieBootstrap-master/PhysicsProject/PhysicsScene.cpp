@@ -78,7 +78,7 @@ void PhysicsScene::DebugScene()
 
 void PhysicsScene::CheckCollisions()
 {
-	int actorCount = m_actors.size();
+	size_t actorCount = m_actors.size();
 	for (int outer = 0; outer < actorCount - 1; outer++)
 	{
 		for (int inner = outer + 1; inner < actorCount; inner++)
@@ -88,14 +88,39 @@ void PhysicsScene::CheckCollisions()
 			int shapeID_out = (int)objOuter->GetShapeID();
 			int shapeID_in = (int)objInner->GetShapeID();
 			
-			int funcIndex = (shapeID_out * (int)ShapeType::SHAPE_COUNT) + shapeID_in;
-			fn colFuncPtr = colFuncArray[funcIndex];
-			if (colFuncPtr != nullptr)
+			//This will check to ensure we do not include the joints
+			if (shapeID_in >= 0 && shapeID_out >= 0)
 			{
-				colFuncPtr(objOuter, objInner);
+				//Uses our function pointer (fn)
+				int funcIndex = (shapeID_out * (int)ShapeType::SHAPE_COUNT) + shapeID_in;
+				fn colFuncPtr = colFuncArray[funcIndex];
+				if (colFuncPtr != nullptr)
+				{
+					//Check if the collision occurs.
+					colFuncPtr(objOuter, objInner);
+				}
 			}
 		}
 	}
+}
+
+void PhysicsScene::ApplyContactForces(Rigidbody* a_actor1, Rigidbody* a_actor2, glm::vec2 a_colNorm, float a_pen)
+{
+	if ((a_actor1 && a_actor1->isTrigger()) || (a_actor2 && a_actor2->isTrigger()))
+		return;
+
+	//Checking if our object is kinematic or not.
+	float bodyToMass = a_actor2 ? a_actor2->GetMass() : INT_MAX;
+	float body1Factor = bodyToMass / (a_actor1->GetMass() + bodyToMass);
+
+	a_actor1->SetPosition(a_actor1->GetPosition() - body1Factor * a_colNorm * a_pen);
+	
+	if (a_actor2)
+	{
+		a_actor2->SetPosition(a_actor2->GetPosition() + (1 - body1Factor) * a_colNorm * a_pen);
+	}
+
+
 }
 
 bool PhysicsScene::Plane2Plane(PhysicsObject*, PhysicsObject*)
@@ -124,7 +149,7 @@ bool PhysicsScene::Plane2Box(PhysicsObject* objPlane, PhysicsObject* objBox)
 		//Get a representation point on the plane
 		glm::vec2 planeOrigin = plane->GetNormal() * plane->GetDistance();
 		//Check all the corners for a collision with the plane
-		for (float x = -box->GetExtents().x; x < box->GetWidth(); x+= box->GetWidth())
+		for (float x = -box->GetExtents().x; x < box->GetWidth(); x += box->GetWidth())
 		{
 			for (float y = -box->GetExtents().y; y < box->GetHeight(); y += box->GetHeight())
 			{
@@ -202,7 +227,7 @@ bool PhysicsScene::Sphere2Sphere(PhysicsObject* objSphere1, PhysicsObject* objSp
 		if (overlap > 0)
 		{
 			
-			sphere1->ResolveCollision(sphere2, 0.5f * (sphere1->GetPosition() + sphere2->GetPosition()));
+			sphere1->ResolveCollision(sphere2, 0.5f * (sphere1->GetPosition() + sphere2->GetPosition()), nullptr, overlap);
 			return true;
 		}
 	}
@@ -234,11 +259,12 @@ bool PhysicsScene::Sphere2Box(PhysicsObject* objSphere, PhysicsObject* objBox)
 		glm::vec2 closestPointOnBoxWorld = box->GetPosition() + closestPointOnTheBox.x *
 			box->GetLocalX() + closestPointOnTheBox.y * box->GetLocalY();
 		glm::vec2 circleToBox = sphere->GetPosition() - closestPointOnBoxWorld;
-		if (glm::length(circleToBox) < sphere->GetRadius())
+		float penetration = sphere->GetRadius() - glm::length(circleToBox);
+		if (penetration > 0)
 		{
 			glm::vec2 direction = glm::normalize(circleToBox);
 			glm::vec2 contact = closestPointOnBoxWorld;
-			box->ResolveCollision(sphere, contact, &direction);
+			box->ResolveCollision(sphere, contact, &direction, penetration);
 		}
 	}
 	return false;
@@ -272,7 +298,7 @@ bool PhysicsScene::Box2Box(PhysicsObject* obj1, PhysicsObject* obj2)
 		}
 		if (pen > 0)
 		{
-			box1->ResolveCollision(box2, contact / float(numContacts), &norm);
+			box1->ResolveCollision(box2, contact / float(numContacts), &norm, pen);
 		}
 		return true;
 	}

@@ -1,7 +1,10 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <vector>
+
+
 class PhysicsObject;
+class Rigidbody;
 
 class PhysicsScene
 {
@@ -30,6 +33,7 @@ public:
 	float GetTimeStep() const { return m_timeStep; }
 
 	void CheckCollisions();
+	static void ApplyContactForces(Rigidbody* a_actor1, Rigidbody* a_actor2, glm::vec2 a_colNorm, float a_pen);
 
 	static bool Plane2Plane(PhysicsObject*, PhysicsObject*);
 	static bool Plane2Sphere(PhysicsObject*, PhysicsObject*);

@@ -8,7 +8,7 @@ public:
 	~Sphere();
 
 	virtual void MakeGizmo();
-
+	virtual bool IsInside(glm::vec2 a_point);
 
 	float GetRadius() { return m_radius; };
 	glm::vec4 GetColour() { return m_colour; }

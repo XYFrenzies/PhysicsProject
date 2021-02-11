@@ -1,4 +1,5 @@
 #include "Plane.h"
+#include "PhysicsScene.h"
 #include <Gizmos.h>
 #include "Rigidbody.h"
 Plane::Plane(glm::vec2 a_norm, float a_dist) : PhysicsObject(ShapeType::PLANE)
@@ -58,14 +59,18 @@ void Plane::ResolveCollision(Rigidbody* a_otherActor, glm::vec2 a_contact)
 
 	//This is the perpendicular distance we apply the 
 	//force at relative to the center of mass: Torque = F * r.
-	float r = glm::dot(localContact, glm::vec2(m_norm.y, m_norm.x));
+	float r = glm::dot(localContact, glm::vec2(m_norm.y, -m_norm.x));
 
 	//This will work out the 'effective mass' - a combination of the moment of 
 	//inertia and mass, it will tell how much the contact point velocitywill change the force we apply
-	float mass0 = 1.0f / (1.0f / a_otherActor->GetMass() + (r + r) / a_otherActor->GetMoment());
+	float mass0 = 1.0f / (1.0f / a_otherActor->GetMass() + (r * r) / a_otherActor->GetMoment());
 
 	//The plane does not move (Static) sowe only use the other actor's velocity
 	float j = -(1 + elasticity) * velocityIntoPlane * mass0; 
 	glm::vec2 force = m_norm * j;
 	a_otherActor->ApplyForce(force, a_contact - a_otherActor->GetPosition());
+
+	float pen = glm::dot(a_contact, m_norm) - m_distToOrigin;
+
+	PhysicsScene::ApplyContactForces(a_otherActor, nullptr, m_norm, pen);
 }

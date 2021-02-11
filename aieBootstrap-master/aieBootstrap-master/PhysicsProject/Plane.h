@@ -10,6 +10,7 @@ public:
 	Plane();
 	~Plane();
 
+	virtual bool IsInside(glm::vec2 a_point) { return false; };
 	virtual void FixedUpdate(glm::vec2 a_gravity, float a_timeStep);
 	virtual void Draw() {};
 	virtual void Debug() {};

@@ -17,6 +17,8 @@ public:
 	virtual void update(float deltaTime);
 	virtual void draw();
 
+	glm::vec2 ScreenToWorld(glm::vec2 a_screenPos);
+
 protected:
 
 	aie::Renderer2D*	m_2dRenderer;
@@ -24,7 +26,11 @@ protected:
 
 	PhysicsScene* m_physicsScene;
 
+	const float m_aspectRatio = 16 / 9.0f;
+	const float m_extents = 100;
+
 public:
+	void SpringTest(int a_amount);
 	void DrawRect();
 	void SphereAndPlane();
 };

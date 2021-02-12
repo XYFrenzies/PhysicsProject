@@ -17,6 +17,7 @@ public:
 	//Removes a Physics Object
 	void RemoveActor(PhysicsObject* a_actor);
 
+	PhysicsObject* GetActor(PhysicsObject* a_actor);
 	//Updates per frame due to the delta time, the update will be called in the PhysicsObject class.
 	//This is dealing with the collision detection and resolution
 	void Update(float dt);

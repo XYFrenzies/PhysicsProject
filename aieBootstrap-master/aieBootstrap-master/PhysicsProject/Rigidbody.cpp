@@ -1,6 +1,7 @@
 #include "Rigidbody.h"
 #include "PhysicsScene.h"
 #include <iostream>
+#include "glm/geometric.hpp"
 #define MIN_LINEAR_THRESHOLD 0.001f;
 #define MIN_ANGULAR_THRESHOLD 0.001f;
 
@@ -15,8 +16,8 @@ Rigidbody::Rigidbody(ShapeType a_shapeID, glm::vec2 a_pos,
 	m_isKinematic = false;
 	m_isTrigger = false;
 	m_elasticity = 0.8f;
-	m_linDrag = 0.3f;
-	m_angDrag = 0.3f;
+	m_linDrag = 0.6f;
+	m_angDrag = 1.2f;
 
 }
 
@@ -35,8 +36,8 @@ void Rigidbody::FixedUpdate(glm::vec2 a_gravity, float a_timeStep)
 		//them from the list and them call triggerExit
 		for (auto it = m_objInside.begin(); it != m_objInside.end(); it++)
 		{
-			if (std::find(m_objInsideThisFrame.begin(), 
-				m_objInsideThisFrame.end(), *it) == 
+			if (std::find(m_objInsideThisFrame.begin(),
+				m_objInsideThisFrame.end(), *it) ==
 				m_objInsideThisFrame.end())
 			{
 				if (m_triggerExit)
@@ -80,12 +81,11 @@ void Rigidbody::FixedUpdate(glm::vec2 a_gravity, float a_timeStep)
 void Rigidbody::ApplyForce(glm::vec2 a_force, glm::vec2 a_pos)
 {
 	m_vel += a_force / GetMass();
-	m_angVel += (a_force.y * a_pos.x - a_force.x * a_pos.y) / GetMoment();
+	m_angVel += (a_force.y * a_pos.x + a_force.x * a_pos.y) / GetMoment();
 }
 
 
-
-void Rigidbody::ResolveCollision(Rigidbody* a_otherActor, 
+void Rigidbody::ResolveCollision(Rigidbody* a_otherActor,
 	glm::vec2 a_contact, glm::vec2* a_colNormal, float a_pen)
 {
 	//Register that these two objects ave overlapped this frame
@@ -103,13 +103,13 @@ void Rigidbody::ResolveCollision(Rigidbody* a_otherActor,
 	glm::vec2 perpendicularColNorm(normal.y, -normal.x);
 	//These are applied to the radius from axis to the application of force
 	float radius1 = glm::dot(a_contact - m_pos, -perpendicularColNorm);
-	float radius2 = glm::dot(a_contact - a_otherActor->GetPosition(), 
+	float radius2 = glm::dot(a_contact - a_otherActor->GetPosition(),
 		perpendicularColNorm);
 
 	//Velocity of the contact point on the object
 	float cp_vel1 = glm::dot(m_vel, normal) - radius1 * m_angVel;
 	//Velocity of contact point of the other object
-	float cp_vel2 = glm::dot(a_otherActor->GetVelocity(), normal) + 
+	float cp_vel2 = glm::dot(a_otherActor->GetVelocity(), normal) +
 		radius2 * a_otherActor->m_angVel;
 
 	if (cp_vel1 > cp_vel2)//They are moving closer
@@ -118,7 +118,7 @@ void Rigidbody::ResolveCollision(Rigidbody* a_otherActor,
 		//How much it will move due to the forces applied
 		float mass1 = 1.0f / (1.0f / m_mass + (radius1 * radius1) / GetMoment());
 		float mass2 = 1.0f / (1.0f / a_otherActor->m_mass +
-			(radius2 + radius2) / a_otherActor->GetMoment());
+			(radius2 * radius2) / a_otherActor->GetMoment());
 
 		float e = (m_elasticity + a_otherActor->GetElasticity()) / 2.0f;
 		glm::vec2 impact = (1.0f + e) * mass1 * mass2 / (mass1 + mass2) * (cp_vel1 - cp_vel2) * normal;

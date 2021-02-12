@@ -44,7 +44,7 @@ bool PhysicsProjectApp::startup() {
 
 
 	//DrawRect();
-	SpringTest(10);
+	SpringTest();
 	return true;
 }
 
@@ -64,13 +64,27 @@ void PhysicsProjectApp::update(float deltaTime) {
 	m_physicsScene->Update(deltaTime);
 	m_physicsScene->Draw();
 
-	if (input->isMouseButtonDown(0))
+	//Getting the position of the whiteball and drawing a line from it to the mouse
+	//if(whiteBall.Get)
+	if (whiteBall != nullptr && glm::abs(whiteBall->GetVelocity().x) <= 0.1f 
+		&& glm::abs(whiteBall->GetVelocity().y) <= 0.1f)
 	{
+		glm::vec2 whiteBallPos = whiteBall->GetPosition();
+
 		int xScreen, yScreen;
 		input->getMouseXY(&xScreen, &yScreen);
+
 		glm::vec2 worldPos = ScreenToWorld(glm::vec2(xScreen, yScreen));
-		aie::Gizmos::add2DCircle(worldPos, 5, 32, glm::vec4(0.7f));
+
+		aie::Gizmos::add2DLine(whiteBallPos, worldPos, glm::vec4(1, 1, 1, 1));
+		if (input->isMouseButtonDown(0))
+		{
+
+			whiteBall->ApplyForce(glm::vec2((worldPos.x * 2) - (whiteBallPos.x * 2), (worldPos.y * 2) - (whiteBallPos.y * 2)), glm::vec2(0));
+		}
 	}
+
+
 
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
@@ -118,78 +132,103 @@ glm::vec2 PhysicsProjectApp::ScreenToWorld(glm::vec2 a_screenPos)
 	return worldPos;
 }
 
-void PhysicsProjectApp::SpringTest(int a_amount)
+void PhysicsProjectApp::SpringTest()
 {
-	Box* topLeftBarrier = new Box(glm::vec2(-50,54.25), glm::vec2(0), 0, 10, 40, 2);
+	//Barriers for the pool table
+	Box* topLeftBarrier = new Box(glm::vec2(-48,54.25f), 
+		glm::vec2(0), 0, 10, 42, 2);
+	Box* leftBarrier = new Box(glm::vec2(-98, (56.25f / 2) - 28), 
+		glm::vec2(0), 0, 10, 2, 48);
+	Box* bottomLeftBarrier = new Box(glm::vec2(-48, -54.25f),
+		glm::vec2(0), 0, 10, 42, 2);
+	Box* topRightBarrier = new Box(glm::vec2(48, 54.25f), 
+		glm::vec2(0), 0, 10, 42, 2);
+	Box* rightBarrier = new Box(glm::vec2(98, (56.25f / 2) - 28), 
+		glm::vec2(0), 0, 10, 2, 48);
+	Box* bottomRightBarrier = new Box(glm::vec2(48, -54.25f), 
+		glm::vec2(0), 0, 10, 42, 2);
 
-	Box* leftBarrier = new Box(glm::vec2(-98, (56.25 / 2) - 28), glm::vec2(0), 0, 10, 2, 48);
+	//Ball's for the pool game
+	whiteBall = new Sphere(glm::vec2(-20, -20), glm::vec2(60,20), 1,
+		10, 2, glm::vec4(1, 1, 1, 1));
+	Sphere* filledBall1 = new Sphere(glm::vec2(36, -4), glm::vec2(0), 1, 
+		10, 2, glm::vec4(1, 1, 0, 1));
+	Sphere* filledBall2 = new Sphere(glm::vec2(24, -2), glm::vec2(0), 1,
+		10, 2, glm::vec4(0, 0, 0.5f, 1));
+	Sphere* filledBall3 = new Sphere(glm::vec2(36, 8), glm::vec2(0), 1,
+		10, 2, glm::vec4(0.7f, 0, 0, 1));
+	Sphere* filledBall4 = new Sphere(glm::vec2(28, 0), glm::vec2(0), 1,
+		10, 2, glm::vec4(0.5f, 0, 0.5f, 1));
+	Sphere* filledBall5 = new Sphere(glm::vec2(28, -4), glm::vec2(0), 1,
+		10, 2, glm::vec4(1, 0, 0, 1));
+	Sphere* filledBall6 = new Sphere(glm::vec2(28, 4), glm::vec2(0), 1,
+		10, 2, glm::vec4(0, 0.2f, 0, 1));
+	Sphere* filledBall7 = new Sphere(glm::vec2(32, -6), glm::vec2(0), 1,
+		10, 2, glm::vec4(0.3f, 0, 0, 1));
+	Sphere* blackBall8 = new Sphere(glm::vec2(32, 2), glm::vec2(0), 1,
+		10, 2, glm::vec4(0, 0, 0, 1));
+	Sphere* stripedBall9 = new Sphere(glm::vec2(32, -2), glm::vec2(0), 1,
+		10, 2, glm::vec4(1, 1, 0, 0));
+	Sphere* stripedBall10 = new Sphere(glm::vec2(32, 6), glm::vec2(0), 1,
+		10, 2, glm::vec4(0, 0, 0.5f, 0));
+	Sphere* stripedBall11 = new Sphere(glm::vec2(24, 2), glm::vec2(0), 1,
+		10, 2, glm::vec4(0.7f, 0, 0, 0));
+	Sphere* stripedBall12 = new Sphere(glm::vec2(36, 4), glm::vec2(0), 1,
+		10, 2, glm::vec4(0.5f, 0, 0.5f, 0));			 
+	Sphere* stripedBall13 = new Sphere(glm::vec2(36, 0), glm::vec2(0), 1,
+		10, 2, glm::vec4(1, 0, 0, 0));			 
+	Sphere* stripedBall14 = new Sphere(glm::vec2(20, 0), glm::vec2(0), 1,
+		10, 2, glm::vec4(0, 0.2f, 0, 0));			 
+	Sphere* stripedBall15 = new Sphere(glm::vec2(36, -8), glm::vec2(0), 1,
+		10, 2, glm::vec4(0.3f, 0, 0, 0));
 
-	Box* bottomLeftBarrier = new Box(glm::vec2(-48, -54.25), glm::vec2(0), 0, 10, 41, 2);
-
-	Box* topRightBarrier = new Box(glm::vec2(50, 54.25), glm::vec2(0), 0, 10, 40, 2);
-
-	Box* rightBarrier = new Box(glm::vec2(98, (56.25 / 2) - 28), glm::vec2(0), 0, 10, 2, 48);
-
-	Box* bottomRightBarrier = new Box(glm::vec2(48, -54.25), glm::vec2(0), 0, 10, 41, 2);
-
-
-
-
-	Sphere* whiteBall = new Sphere(glm::vec2(-20, 0), glm::vec2(80,0),
-		4, 2, glm::vec4(1, 1, 1, 1));
-	Sphere* filledBall1 = new Sphere(glm::vec2(36, -4), glm::vec2(0),
-		2, 2, glm::vec4(1, 1, 0, 1));
-	Sphere* filledBall2 = new Sphere(glm::vec2(24, -2), glm::vec2(0),
-		2, 2, glm::vec4(0, 0, 0.5f, 1));
-	Sphere* filledBall3 = new Sphere(glm::vec2(36, 8), glm::vec2(0),
-		2, 2, glm::vec4(0.7f, 0, 0, 1));
-	Sphere* filledBall4 = new Sphere(glm::vec2(28, 0), glm::vec2(0),
-		2, 2, glm::vec4(0.5f, 0, 0.5f, 1));
-	Sphere* filledBall5 = new Sphere(glm::vec2(28, -4), glm::vec2(0),
-		2, 2, glm::vec4(1, 0, 0, 1));
-	Sphere* filledBall6 = new Sphere(glm::vec2(28, 4), glm::vec2(0),
-		2, 2, glm::vec4(0, 0.2f, 0, 1));
-	Sphere* filledBall7 = new Sphere(glm::vec2(32, -6), glm::vec2(0),
-		2, 2, glm::vec4(0.3f, 0, 0, 1));
-	Sphere* blackBall8 = new Sphere(glm::vec2(32, 2), glm::vec2(0),
-		2, 2, glm::vec4(0, 0, 0, 1));
-	Sphere* stripedBall9 = new Sphere(glm::vec2(32, -2), glm::vec2(0),
-		2, 2, glm::vec4(1, 1, 0, 0));
-	Sphere* stripedBall10 = new Sphere(glm::vec2(32, 6), glm::vec2(0),
-		2, 2, glm::vec4(0, 0, 0.5f, 0));
-	Sphere* stripedBall11 = new Sphere(glm::vec2(24, 2), glm::vec2(0),
-		2, 2, glm::vec4(0.7f, 0, 0, 0));
-	Sphere* stripedBall12 = new Sphere(glm::vec2(36, 4), glm::vec2(0),
-		2, 2, glm::vec4(0.5f, 0, 0.5f, 0));			 
-	Sphere* stripedBall13 = new Sphere(glm::vec2(36, 0), glm::vec2(0),
-		2, 2, glm::vec4(1, 0, 0, 0));			 
-	Sphere* stripedBall14 = new Sphere(glm::vec2(20, 0), glm::vec2(0),
-		2, 2, glm::vec4(0, 0.2f, 0, 0));			 
-	Sphere* stripedBall15 = new Sphere(glm::vec2(36, -8), glm::vec2(0),
-		2, 2, glm::vec4(0.3f, 0, 0, 0));
-
-	//Sphere* ball2 = new Sphere(glm::vec2(10, -20), glm::vec2(0),
-	//	4, 4, glm::vec4(0, 0.5f, 0.5f, 1));
-
-	//ball2->SetKinematic(true);
-	//ball2->SetTrigger(true);
+	//Triggers (outter triggers for the holes)
+	Sphere* topLeftHole = new Sphere(glm::vec2(-96, 54.25f), glm::vec2(0), 0,
+		2, 6, glm::vec4(0, 0, 0, 1));
+	Sphere* bottomLeftHole = new Sphere(glm::vec2(-96, -54.25f), glm::vec2(0), 0,
+		2, 6, glm::vec4(0, 0, 0, 1));
+	Sphere* bottomMiddleHole = new Sphere(glm::vec2(0, -58.25f), glm::vec2(0), 0,
+		2, 6, glm::vec4(0, 0, 0, 1));
+	Sphere* topMiddleHole = new Sphere(glm::vec2(0, 58.25f), glm::vec2(0), 0,
+		2, 6, glm::vec4(0, 0, 0, 1));
+	Sphere* bottomRightHole = new Sphere(glm::vec2(96, -54.25f), glm::vec2(0), 0,
+		2, 6, glm::vec4(0, 0, 0, 1));
+	Sphere* topRightHole = new Sphere(glm::vec2(96, 54.25f), glm::vec2(0), 0,
+		2, 6, glm::vec4(0, 0, 0, 1));
 
 
 
+
+	//Setting the barriers to not move and be static
 	topLeftBarrier->SetKinematic(true);
 	leftBarrier->SetKinematic(true);
 	bottomLeftBarrier->SetKinematic(true);
 	topRightBarrier->SetKinematic(true);
 	rightBarrier->SetKinematic(true);
 	bottomRightBarrier->SetKinematic(true);
+	//Trigger Kinematic objects
+	topLeftHole->SetTrigger(true);
+	bottomLeftHole->SetTrigger(true);
+	bottomMiddleHole->SetTrigger(true);
+	topMiddleHole->SetTrigger(true);
+	bottomRightHole->SetTrigger(true);
+	topRightHole->SetTrigger(true);
 
-
+	//Barriers
 	m_physicsScene->AddActor(topLeftBarrier);
 	m_physicsScene->AddActor(leftBarrier);
 	m_physicsScene->AddActor(bottomLeftBarrier);
 	m_physicsScene->AddActor(topRightBarrier);
 	m_physicsScene->AddActor(rightBarrier);
 	m_physicsScene->AddActor(bottomRightBarrier);
+	//Tiggered Holes
+	m_physicsScene->AddActor(topLeftHole);
+	m_physicsScene->AddActor(bottomLeftHole);
+	m_physicsScene->AddActor(bottomMiddleHole);
+	m_physicsScene->AddActor(topMiddleHole);
+	m_physicsScene->AddActor(bottomRightHole);
+	m_physicsScene->AddActor(topRightHole);
+	//Different ball types
 	m_physicsScene->AddActor(whiteBall);
 	m_physicsScene->AddActor(filledBall1);
 	m_physicsScene->AddActor(filledBall2);
@@ -213,18 +252,18 @@ void PhysicsProjectApp::SpringTest(int a_amount)
 void PhysicsProjectApp::DrawRect()
 {
 
-	m_physicsScene->AddActor(new Sphere(glm::vec2(10, 10), glm::vec2(-10, -17),
+	m_physicsScene->AddActor(new Sphere(glm::vec2(-30, 0), glm::vec2(30,0), 1,
 		1, 3, glm::vec4(1, 0, 0, 1)));
-	m_physicsScene->AddActor(new Plane({ -0.65, 0.75},-25));
+	m_physicsScene->AddActor(new Plane());
 
-	Sphere* sphere1 = new Sphere(glm::vec2(30, 10), glm::vec2(-10, -17),
+	Sphere* sphere1 = new Sphere(glm::vec2(30, 0), glm::vec2(-30, 0), 1,
 		1, 3, glm::vec4(1, 0, 1, 0));
 	//sphere1->SetKinematic(true);
 	sphere1->SetRotation(0.5f);
 	m_physicsScene->AddActor(sphere1);
 
-	Box* box1 = new Box(glm::vec2(0, 0), glm::vec2(16, 4), 1, 20, 8, 4, glm::vec4(1, 0, 1, 1));
-	Box* box2 = new Box(glm::vec2(30, 30), glm::vec2(16, 4), 1, 20, 8, 4, glm::vec4(1, 1, 0, 1));
+	Box* box1 = new Box(glm::vec2(0, 0), glm::vec2(0), 1, 2, 8, 4, glm::vec4(1, 0, 1, 1));
+	Box* box2 = new Box(glm::vec2(30, 10), glm::vec2(0), 1, 2, 8, 4, glm::vec4(1, 1, 0, 1));
 
 	box1->SetRotation(0.5f);
 	box2->SetRotation(0.75f);

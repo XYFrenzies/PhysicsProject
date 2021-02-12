@@ -40,6 +40,17 @@ void PhysicsScene::RemoveActor(PhysicsObject* a_actor)
 		m_actors.erase(it);
 }
 
+PhysicsObject* PhysicsScene::GetActor(PhysicsObject* a_actor)
+{
+	for (size_t i = 0; i < m_actors.size() - 1; i++)
+	{
+		if (m_actors[i] = a_actor)
+			return m_actors[i];
+	}
+
+	return nullptr;
+}
+
 void PhysicsScene::Update(float dt)
 {
 	static std::list<PhysicsObject*> objs;
@@ -226,7 +237,6 @@ bool PhysicsScene::Sphere2Sphere(PhysicsObject* objSphere1, PhysicsObject* objSp
 		float overlap = sphere1->GetRadius() + sphere2->GetRadius() - dist;
 		if (overlap > 0)
 		{
-			
 			sphere1->ResolveCollision(sphere2, 0.5f * (sphere1->GetPosition() + sphere2->GetPosition()), nullptr, overlap);
 			return true;
 		}

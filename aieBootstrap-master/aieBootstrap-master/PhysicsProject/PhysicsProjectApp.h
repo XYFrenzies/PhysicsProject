@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Renderer2D.h"
 #include "PhysicsScene.h"
+#include "Sphere.h"
 
 
 class PhysicsProjectApp : public aie::Application {
@@ -28,9 +29,9 @@ protected:
 
 	const float m_aspectRatio = 16 / 9.0f;
 	const float m_extents = 100;
+	Sphere* whiteBall = nullptr;
 
 public:
-	void SpringTest(int a_amount);
+	void SpringTest();
 	void DrawRect();
-	void SphereAndPlane();
 };

@@ -22,7 +22,10 @@ public:
 		return m_vel; }
 	float GetMass() { return m_isKinematic ? INT_MAX : m_mass; }
 	float GetRotation() { return m_rot; }
-	float GetMoment() { return m_isKinematic ? INT_MAX : m_moment; }
+	float GetMoment() 
+	{ 
+		return m_isKinematic ? INT_MAX : m_moment; 
+	}
 	float GetAngularVelocity() { 
 		return m_angVel; }
 

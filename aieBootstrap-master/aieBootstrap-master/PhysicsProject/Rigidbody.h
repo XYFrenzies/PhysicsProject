@@ -44,11 +44,18 @@ public:
 	std::function<void(PhysicsObject*)> m_triggerEnter;
 	std::function<void(PhysicsObject*)> m_triggerExit;
 	bool isTrigger() { return m_isTrigger; }
+
+	
 	bool SetTrigger(bool a_state) { return m_isTrigger = a_state; }
+	float SetAngularVelocity(float a_angVel) { return m_angVel = a_angVel; }
+	glm::vec2 SetVelocity(glm::vec2 a_vel) { return m_vel = a_vel; }
+
+
 
 private:
 protected:
 	bool m_isTrigger;
+
 	std::list<PhysicsObject*> m_objInside;
 	std::list<PhysicsObject*> m_objInsideThisFrame;
 

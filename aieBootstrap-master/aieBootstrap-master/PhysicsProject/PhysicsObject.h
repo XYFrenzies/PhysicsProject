@@ -25,6 +25,11 @@ public:
 	virtual bool IsInside(glm::vec2 a_point) = 0;
 
 	ShapeType GetShapeID() { return m_shapeID; }
+	bool GetHasHitTrigger()
+	{
+		return m_hasHitTrigger;
+	}
+	bool SetHasHitTrigger(bool a_state) { return m_hasHitTrigger = a_state; }
 
 	bool IsKinematic() { return m_isKinematic; }
 	bool SetKinematic(bool a_state) { return m_isKinematic = a_state; }
@@ -36,9 +41,10 @@ public:
 private:
 protected:
 	ShapeType m_shapeID;
+	bool m_hasHitTrigger;
 	bool m_isKinematic;
 	float m_elasticity;
-	PhysicsObject(ShapeType a_shapeID) : m_shapeID(a_shapeID), m_isKinematic(), m_elasticity() {}
+	PhysicsObject(ShapeType a_shapeID) : m_shapeID(a_shapeID), m_isKinematic(), m_elasticity(), m_hasHitTrigger() {}
 
 };
 

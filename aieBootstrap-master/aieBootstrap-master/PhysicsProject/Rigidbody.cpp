@@ -15,6 +15,7 @@ Rigidbody::Rigidbody(ShapeType a_shapeID, glm::vec2 a_pos,
 	m_angVel = 0;
 	m_isKinematic = false;
 	m_isTrigger = false;
+	m_hasHitTrigger = false;
 	m_elasticity = 0.8f;
 	m_linDrag = 0.6f;
 	m_angDrag = 1.2f;
@@ -41,11 +42,10 @@ void Rigidbody::FixedUpdate(glm::vec2 a_gravity, float a_timeStep)
 				m_objInsideThisFrame.end())
 			{
 				if (m_triggerExit)
-					m_triggerExit(*it);
-				it = m_objInside.erase(it);
+					m_triggerExit(*it);		
+					it = m_objInside.erase(it);
 				if (it == m_objInside.end())
 					break;
-
 			}
 		}
 	}
@@ -160,9 +160,11 @@ void Rigidbody::TriggerEnter(PhysicsObject* a_otherActor)
 		m_objInside.end(), a_otherActor) == m_objInside.end())
 	{
 		m_objInside.push_back(a_otherActor);
+		SetHasHitTrigger(true);
 		if (m_triggerEnter != nullptr)
 		{
 			m_triggerEnter(a_otherActor);
+
 		}
 	}
 }

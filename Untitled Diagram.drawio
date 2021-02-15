@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2021-02-15T08:30:45.892Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36" etag="MBBTCS8ULUlMzjCqy9FV" version="14.3.1" type="github">
+<mxfile host="app.diagrams.net" modified="2021-02-15T21:33:17.416Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36" etag="VabcLMfaa8xkTrPYCoat" version="14.3.2" type="github">
   <diagram id="2biwBjbahT85dRKi6ixM" name="Page-1">
-    <mxGraphModel dx="317" dy="541" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="544" dy="933" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -15,17 +15,37 @@
         <mxCell id="vZ9UbWL4CDNbCzjpSIzU-3" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="vZ9UbWL4CDNbCzjpSIzU-1" vertex="1">
           <mxGeometry y="100" width="270" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="vZ9UbWL4CDNbCzjpSIzU-4" value="+ FixedUpdate(gravity: vec2, timeStep:float)&#xa;+ MakeGizmo()&#xa;+ GetElasticity()&#xa;+ SetElasticity()&#xa;+ GetShapeID()&#xa;+ IsInside()&#xa;+ ResetPosition()&#xa;+ IsKinematic()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="vZ9UbWL4CDNbCzjpSIzU-1" vertex="1">
+        <mxCell id="vZ9UbWL4CDNbCzjpSIzU-4" value="+ FixedUpdate(gravity: vec2, timeStep: float): void&#xa;+ MakeGizmo(): void&#xa;+ GetElasticity(): float&#xa;+ SetElasticity(float a_new): float&#xa;+ GetShapeID(): ShapeType&#xa;+ IsInside(a_point: vec2): bool&#xa;+ ResetPosition(): void&#xa;+ IsKinematic(): bool" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="vZ9UbWL4CDNbCzjpSIzU-1" vertex="1">
           <mxGeometry y="108" width="270" height="122" as="geometry" />
         </mxCell>
-        <mxCell id="CwgVQCQYjrrWWqewjKFB-3" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;fontSize=11;entryX=0.499;entryY=1.023;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="vZ9UbWL4CDNbCzjpSIzU-4">
+        <mxCell id="jiQypm9qZ_a_5QQD7qSU-1" value="Plane" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="80" y="470" width="220" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="jiQypm9qZ_a_5QQD7qSU-2" value="# m_normal: vec2&#xa;# m_colour: vec4&#xa;# m_distanceToNormal: float" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="jiQypm9qZ_a_5QQD7qSU-1">
+          <mxGeometry y="26" width="220" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="jiQypm9qZ_a_5QQD7qSU-3" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="jiQypm9qZ_a_5QQD7qSU-1">
+          <mxGeometry y="80" width="220" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="jiQypm9qZ_a_5QQD7qSU-4" value="+ GetNormal(): vec2&#xa;+ ResolveCollision(a_otherActor: &#xa;RigidBody, a_contact: vec2): void&#xa;+ GetNormal(): vec2&#xa;+ GetColour(): vec4&#xa;+ GetDistance(): float" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="jiQypm9qZ_a_5QQD7qSU-1">
+          <mxGeometry y="88" width="220" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="jiQypm9qZ_a_5QQD7qSU-6" value="Rigidbody" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="415" y="400" width="160" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="jiQypm9qZ_a_5QQD7qSU-7" value="+ field: type" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="jiQypm9qZ_a_5QQD7qSU-6">
+          <mxGeometry y="26" width="160" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="jiQypm9qZ_a_5QQD7qSU-8" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="jiQypm9qZ_a_5QQD7qSU-6">
+          <mxGeometry y="52" width="160" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="jiQypm9qZ_a_5QQD7qSU-9" value="+ method(type): type" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="jiQypm9qZ_a_5QQD7qSU-6">
+          <mxGeometry y="60" width="160" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="jiQypm9qZ_a_5QQD7qSU-12" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.494;entryY=1.009;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="jiQypm9qZ_a_5QQD7qSU-6" target="vZ9UbWL4CDNbCzjpSIzU-4">
           <mxGeometry width="160" relative="1" as="geometry">
-            <mxPoint x="360" y="400" as="sourcePoint" />
-            <mxPoint x="580" y="370" as="targetPoint" />
-            <Array as="points">
-              <mxPoint x="360" y="320" />
-              <mxPoint x="495" y="320" />
-            </Array>
+            <mxPoint x="260" y="370" as="sourcePoint" />
+            <mxPoint x="495" y="280" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>

@@ -68,7 +68,7 @@ void Application2D::draw() {
 
 	// wipe the screen to the background colour
 	clearScreen();
-	setBackgroundColour(0, 0.5f, 0, 0);
+
 	// begin drawing sprites
 	m_2dRenderer->begin();
 

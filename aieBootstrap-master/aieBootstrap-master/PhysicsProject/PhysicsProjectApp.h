@@ -24,7 +24,7 @@ public:
 
 	void MoveBallLocation();
 
-	
+	bool HasBlackBallBeenSunk();
 
 protected:
 
@@ -47,6 +47,10 @@ protected:
 	std::vector<Sphere*> m_pockets;
 	bool mouseHasBeenPressed = false;
 	bool isItPlayer1sTurn;
+	bool firstHit;
+	bool hasHit;
+	bool blackBallHasSunk;
+
 
 
 public:

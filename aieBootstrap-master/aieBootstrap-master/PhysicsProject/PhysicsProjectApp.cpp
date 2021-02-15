@@ -11,6 +11,9 @@
 PhysicsProjectApp::PhysicsProjectApp() : m_2dRenderer(), m_font(), m_physicsScene()
 {
 	isItPlayer1sTurn = true;
+	firstHit = false;
+	hasHit = false;
+	blackBallHasSunk = false;
 }
 
 PhysicsProjectApp::~PhysicsProjectApp() {
@@ -43,8 +46,8 @@ bool PhysicsProjectApp::startup() {
 	setVSync(true);
 
 
-	DrawRect();
-	//SpringTest();
+	//DrawRect();
+	SpringTest();
 	return true;
 }
 
@@ -74,10 +77,18 @@ void PhysicsProjectApp::update(float deltaTime) {
 
 	//Getting the position of the whiteball and drawing a line from it to the mouse
 	if (whiteBall != nullptr && abs(whiteBall->GetVelocity().x) <= 0.2f &&
-		abs(whiteBall->GetVelocity().y) <= 0.2f)
+		abs(whiteBall->GetVelocity().y) <= 0.2f && HasBlackBallBeenSunk() == false)
 	{
 		if (IsBallsStillMoving() == false)
 		{
+			if (firstHit == true && hasHit == true)
+			{
+				if (isItPlayer1sTurn)
+					isItPlayer1sTurn = false;
+				else
+					isItPlayer1sTurn = true;
+				hasHit = false;
+			}
 			for (int i = 0; i < m_ballsInScene.size(); i++)
 			{
 				m_ballsInScene[i]->SetVelocity(glm::vec2(0));
@@ -94,10 +105,9 @@ void PhysicsProjectApp::update(float deltaTime) {
 				mouseHasBeenPressed = true;
 				whiteBall->ApplyForce(glm::vec2((worldPos.x * 8) - (whiteBallPos.x * 8),
 					(worldPos.y * 8) - (whiteBallPos.y * 8)), glm::vec2(0));
-				if (isItPlayer1sTurn)
-					isItPlayer1sTurn = false;
-				else
-					isItPlayer1sTurn = true;
+
+				firstHit = true;
+				hasHit = true;
 			}
 
 		}
@@ -128,17 +138,28 @@ void PhysicsProjectApp::draw() {
 	sprintf_s(fps, 32, "Fps: %i", getFPS());
 	m_2dRenderer->drawText(m_font, fps, 0, 720 - 32);
 
-	if (isItPlayer1sTurn)
+	if (HasBlackBallBeenSunk() == false)
 	{
-		m_2dRenderer->drawText(m_font, "It is Player 1's Turn", 300, 720);
+		if (isItPlayer1sTurn)
+		{
+			m_2dRenderer->drawText(m_font, "It is Player 1's Turn", 300, 700);
+		}
+		else
+		{
+			m_2dRenderer->drawText(m_font, "It is Player 2's Turn", 300, 700);
+		}
+		m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 0);
 	}
 	else
 	{
-		m_2dRenderer->drawText(m_font, "It is Player 2's Turn", 0, 52);
+		m_2dRenderer->drawText(m_font, "GAME OVER", 300, 350);
+		m_2dRenderer->drawText(m_font, "Press ESC to quit", 300, 300);
 	}
 
+
+
 	// output some text, uses the last used colour
-	m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 0);
+
 
 	// done drawing sprites
 	m_2dRenderer->end();
@@ -181,6 +202,31 @@ void PhysicsProjectApp::MoveBallLocation()
 	}
 }
 
+bool PhysicsProjectApp::HasBlackBallBeenSunk()
+{
+	if (blackBallHasSunk == true)
+	{
+		return true;
+	}
+	else
+	{
+		for (int j = 0; j < m_pockets.size(); j++)
+		{
+			m_pockets[j]->m_triggerEnter = [=](PhysicsObject* other)
+			{
+				if (other == blackBall)
+				{
+					blackBallHasSunk = true;
+					return true;
+				}
+			};
+		}
+	}
+
+	
+	return false;
+}
+
 void PhysicsProjectApp::SpringTest()
 {
 	//Barriers for the pool table
@@ -214,7 +260,7 @@ void PhysicsProjectApp::SpringTest()
 		10, 2, glm::vec4(0, 0.2f, 0, 1));
 	Sphere* filledBall7 = new Sphere(glm::vec2(32, -6), glm::vec2(0), 1,
 		10, 2, glm::vec4(0.3f, 0, 0, 1));
-	Sphere* blackBall8 = new Sphere(glm::vec2(32, 2), glm::vec2(0), 1,
+	blackBall = new Sphere(glm::vec2(32, 2), glm::vec2(0), 1,
 		10, 2, glm::vec4(0, 0, 0, 1));
 	Sphere* stripedBall9 = new Sphere(glm::vec2(32, -2), glm::vec2(0), 1,
 		10, 2, glm::vec4(1, 1, 0, 0));
@@ -239,7 +285,7 @@ void PhysicsProjectApp::SpringTest()
 	m_ballsInScene.push_back(filledBall5);
 	m_ballsInScene.push_back(filledBall6);
 	m_ballsInScene.push_back(filledBall7);
-	m_ballsInScene.push_back(blackBall8);
+	m_ballsInScene.push_back(blackBall);
 	m_ballsInScene.push_back(stripedBall9);
 	m_ballsInScene.push_back(stripedBall10);
 	m_ballsInScene.push_back(stripedBall11);

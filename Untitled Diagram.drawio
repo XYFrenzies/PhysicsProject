@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2021-02-15T23:13:19.705Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36" etag="Yqwfbd53oScmYYlMAxny" version="14.3.2" type="github">
+<mxfile host="app.diagrams.net" modified="2021-02-15T23:32:23.854Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36" etag="4Ot4f2mYLVUxL4ogFtGM" version="14.3.2" type="github">
   <diagram id="2biwBjbahT85dRKi6ixM" name="Page-1">
-    <mxGraphModel dx="554" dy="653" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -121,6 +121,33 @@
             <Array as="points">
               <mxPoint x="640" y="1000" />
             </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jiQypm9qZ_a_5QQD7qSU-35" value="PhysicsScene" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="830" y="40" width="380" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="jiQypm9qZ_a_5QQD7qSU-36" value="# gravity: vec2&#xa;# timestep: float&#xa;# actors: vector&lt;PhysicsObject&gt;" style="text;strokeColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fillColor=#ffffff;" vertex="1" parent="jiQypm9qZ_a_5QQD7qSU-35">
+          <mxGeometry y="26" width="380" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="jiQypm9qZ_a_5QQD7qSU-37" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="jiQypm9qZ_a_5QQD7qSU-35">
+          <mxGeometry y="80" width="380" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="jiQypm9qZ_a_5QQD7qSU-38" value="+ AddActor(actor: PhysicsObject*): void&#xa;+ RemoveActor(actor: PhysicsObject*): void&#xa;+ GetActor(actor: PhysicsObject*): PhysicsObject*&#xa;+ Update(deltatime: float): void&#xa;+ Draw(): void&#xa;+ SetGravity(gravity: vec2): void&#xa;+ GetGravity(): vec2&#xa;+ SetTimeStep(timestep: const float): void&#xa;+ GetTimeStep(): float&#xa;+ CheckCollisions(): void&#xa;+ ApplyContactaForces(actor1: Rigidbody*, actor2: Rigidbody*,&#xa;collisionNormal: vec2, penetration: float): void&#xa;+ Plane2Plane(plane: PhysicsObject*, plane: PhysicsObject*): bool&#xa;+ Plane2Sphere(plane: PhysicsObject*, sphere PhysicsObject*): bool&#xa;+ Plane2Box(plane: PhysicsObject*, box: PhysicsObject*): bool&#xa;+ Sphere2Plane(sphere: PhysicsObject*, plane: PhysicsObject*): bool&#xa;+ Sphere2Sphere(sphere: PhysicsObject*, sphere: PhysicsObject*): bool&#xa;+ Sphere2Box(sphere: PhysicsObject*, box: PhysicsObject*): bool&#xa;+ Box2Plane(box: PhysicsObject*, plane: PhysicsObject*): bool&#xa;+ Box2Sphere(box: PhysicsObject*, sphere: PhysicsObject*): bool&#xa;+ Box2Box(box: PhysicsObject*, box: PhysicsObject*): bool&#xa;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="jiQypm9qZ_a_5QQD7qSU-35">
+          <mxGeometry y="88" width="380" height="302" as="geometry" />
+        </mxCell>
+        <mxCell id="jiQypm9qZ_a_5QQD7qSU-41" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;exitX=0.5;exitY=1.013;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.007;entryY=0.99;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="jiQypm9qZ_a_5QQD7qSU-38" target="jiQypm9qZ_a_5QQD7qSU-7">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="950" y="450" as="sourcePoint" />
+            <mxPoint x="1110" y="450" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1020" y="628" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jiQypm9qZ_a_5QQD7qSU-42" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;entryX=1;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.044;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="jiQypm9qZ_a_5QQD7qSU-38" target="vZ9UbWL4CDNbCzjpSIzU-2">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="670" y="140" as="sourcePoint" />
+            <mxPoint x="830" y="140" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>

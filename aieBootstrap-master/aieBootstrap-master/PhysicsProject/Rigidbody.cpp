@@ -15,7 +15,6 @@ Rigidbody::Rigidbody(ShapeType a_shapeID, glm::vec2 a_pos,
 	m_angVel = 0;
 	m_isKinematic = false;
 	m_isTrigger = false;
-	m_hasHitTrigger = false;
 	m_elasticity = 0.8f;
 	m_linDrag = 0.6f;
 	m_angDrag = 1.2f;
@@ -160,7 +159,6 @@ void Rigidbody::TriggerEnter(PhysicsObject* a_otherActor)
 		m_objInside.end(), a_otherActor) == m_objInside.end())
 	{
 		m_objInside.push_back(a_otherActor);
-		SetHasHitTrigger(true);
 		if (m_triggerEnter != nullptr)
 		{
 			m_triggerEnter(a_otherActor);

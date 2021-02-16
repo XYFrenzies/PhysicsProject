@@ -39,10 +39,6 @@ protected:
 	Sphere* blackBall = nullptr;
 	std::vector<Sphere*> m_ballsInScene;
 	
-	std::vector<Sphere*> m_stripedBalls;
-	std::vector<Sphere*> m_filledBalls;
-
-
 	std::vector<Sphere*> m_ballsOutOfScene;
 	std::vector<Sphere*> m_pockets;
 	bool mouseHasBeenPressed = false;

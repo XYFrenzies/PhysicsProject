@@ -67,7 +67,6 @@ void PhysicsProjectApp::update(float deltaTime) {
 
 	// input example
 	aie::Input* input = aie::Input::getInstance();
-
 	aie::Gizmos::clear();
 
 	m_physicsScene->Update(deltaTime);
@@ -123,7 +122,7 @@ void PhysicsProjectApp::draw() {
 	// wipe the screen to the background colour
 	clearScreen();
 	setBackgroundColour(0, 0.5f, 0, 0);
-
+	aie::Input* input = aie::Input::getInstance();
 
 	// begin drawing sprites
 	m_2dRenderer->begin();
@@ -134,10 +133,12 @@ void PhysicsProjectApp::draw() {
 		-m_extents / m_aspectRatio, m_extents / m_aspectRatio, -1.0f, 1.0f));
 
 	// draw your stuff here!
-	char fps[32];
-	sprintf_s(fps, 32, "Fps: %i", getFPS());
-	m_2dRenderer->drawText(m_font, fps, 0, 720 - 32);
-
+	if (input->isKeyDown(aie::INPUT_KEY_TAB))
+	{
+		char fps[32];
+		sprintf_s(fps, 32, "Fps: %i", getFPS());
+		m_2dRenderer->drawText(m_font, fps, 0, 720 - 32);
+	}
 	if (HasBlackBallBeenSunk() == false)
 	{
 		if (isItPlayer1sTurn)
@@ -295,21 +296,6 @@ void PhysicsProjectApp::SpringTest()
 	m_ballsInScene.push_back(stripedBall15);
 
 	//Dividing the balls into seperate vectors as well to keep an idea as to what player is what team.
-	m_filledBalls.push_back(filledBall1);
-	m_filledBalls.push_back(filledBall2);
-	m_filledBalls.push_back(filledBall3);
-	m_filledBalls.push_back(filledBall4);
-	m_filledBalls.push_back(filledBall5);
-	m_filledBalls.push_back(filledBall6);
-	m_filledBalls.push_back(filledBall7);
-
-	m_stripedBalls.push_back(stripedBall9);
-	m_stripedBalls.push_back(stripedBall10);
-	m_stripedBalls.push_back(stripedBall11);
-	m_stripedBalls.push_back(stripedBall12);
-	m_stripedBalls.push_back(stripedBall13);
-	m_stripedBalls.push_back(stripedBall14);
-	m_stripedBalls.push_back(stripedBall15);
 
 
 	//Triggers (outter triggers for the holes)

@@ -88,7 +88,7 @@ void PhysicsProjectApp::update(float deltaTime) {
 					isItPlayer1sTurn = true;
 				hasHit = false;
 			}
-			for (int i = 0; i < m_ballsInScene.size(); i++)
+			for (unsigned int i = 0; i < m_ballsInScene.size(); i++)
 			{
 				m_ballsInScene[i]->SetVelocity(glm::vec2(0));
 				m_ballsInScene[i]->SetAngularVelocity(0);
@@ -168,7 +168,7 @@ void PhysicsProjectApp::draw() {
 
 bool PhysicsProjectApp::IsBallsStillMoving()
 {
-	for (int i = 0; i < m_ballsInScene.size(); i++)
+	for (unsigned int i = 0; i < m_ballsInScene.size(); i++)
 	{
 		if (abs(m_ballsInScene[i]->GetVelocity().x) > 0.2f && abs(m_ballsInScene[i]->GetVelocity().y) > 0.2f)
 			return true;
@@ -194,7 +194,7 @@ glm::vec2 PhysicsProjectApp::ScreenToWorld(glm::vec2 a_screenPos)
 void PhysicsProjectApp::MoveBallLocation()
 {
 	int newLoc = -48;
-	for (int i = 0; i < m_ballsOutOfScene.size(); i++)
+	for (unsigned int i = 0; i < m_ballsOutOfScene.size(); i++)
 	{
 
 		dynamic_cast<Rigidbody*>
@@ -211,7 +211,7 @@ bool PhysicsProjectApp::HasBlackBallBeenSunk()
 	}
 	else
 	{
-		for (int j = 0; j < m_pockets.size(); j++)
+		for (unsigned int j = 0; j < m_pockets.size(); j++)
 		{
 			m_pockets[j]->m_triggerEnter = [=](PhysicsObject* other)
 			{
@@ -228,7 +228,7 @@ bool PhysicsProjectApp::HasBlackBallBeenSunk()
 				}
 				else if (other != nullptr)
 				{
-					for (int i = 0; i < m_ballsInScene.size(); i++)
+					for (unsigned int i = 0; i < m_ballsInScene.size(); i++)
 					{
 						if (other == m_ballsInScene[i])
 						{
@@ -245,6 +245,7 @@ bool PhysicsProjectApp::HasBlackBallBeenSunk()
 				}
 				else
 					return false;
+				return false;
 			};
 		}
 	}
@@ -372,12 +373,12 @@ void PhysicsProjectApp::SpringTest()
 
 
 	//Different ball types
-	for (int i = 0; i < m_ballsInScene.size(); i++)
+	for (unsigned int i = 0; i < m_ballsInScene.size(); i++)
 	{
 		m_physicsScene->AddActor(m_ballsInScene[i]);
 	}
 	//Tiggered Holes also triggers
-	for (int i = 0; i < m_pockets.size(); i++)
+	for (unsigned int i = 0; i < m_pockets.size(); i++)
 	{
 		m_pockets[i]->SetTrigger(true);
 		m_physicsScene->AddActor(m_pockets[i]);

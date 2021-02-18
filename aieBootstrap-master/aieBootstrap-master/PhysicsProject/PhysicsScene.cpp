@@ -90,9 +90,9 @@ void PhysicsScene::DebugScene()
 void PhysicsScene::CheckCollisions()
 {
 	size_t actorCount = m_actors.size();
-	for (int outer = 0; outer < actorCount - 1; outer++)
+	for (size_t outer = 0; outer < actorCount - 1; outer++)
 	{
-		for (int inner = outer + 1; inner < actorCount; inner++)
+		for (size_t inner = outer + 1; inner < actorCount; inner++)
 		{
 			PhysicsObject* objOuter = m_actors[outer];
 			PhysicsObject* objInner = m_actors[inner];
@@ -124,7 +124,8 @@ void PhysicsScene::ApplyContactForces(Rigidbody* a_actor1, Rigidbody* a_actor2, 
 	float bodyToMass = a_actor2 ? a_actor2->GetMass() : INT_MAX;
 	float body1Factor = bodyToMass / (a_actor1->GetMass() + bodyToMass);
 
-	a_actor1->SetPosition(a_actor1->GetPosition() - body1Factor * a_colNorm * a_pen);
+	if(a_actor1 != nullptr)
+		a_actor1->SetPosition(a_actor1->GetPosition() - body1Factor * a_colNorm * a_pen);
 	
 	if (a_actor2)
 	{

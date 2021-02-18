@@ -220,6 +220,8 @@ bool PhysicsProjectApp::HasBlackBallBeenSunk()
 					blackBallHasSunk = true;
 					return true;
 				}
+				else
+					return false;
 			};
 		}
 	}

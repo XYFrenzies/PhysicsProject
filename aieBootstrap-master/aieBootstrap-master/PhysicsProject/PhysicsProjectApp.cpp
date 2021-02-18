@@ -215,10 +215,33 @@ bool PhysicsProjectApp::HasBlackBallBeenSunk()
 		{
 			m_pockets[j]->m_triggerEnter = [=](PhysicsObject* other)
 			{
-				if (other == blackBall)
+				if (other == whiteBall)
+				{
+					whiteBall->SetPosition(glm::vec2(-20, 0));
+					whiteBall->SetVelocity(glm::vec2(0));
+					whiteBall->SetAngularVelocity(0);
+				}
+				else if (other == blackBall)
 				{
 					blackBallHasSunk = true;
 					return true;
+				}
+				else if (other != nullptr)
+				{
+					for (int i = 0; i < m_ballsInScene.size(); i++)
+					{
+						if (other == m_ballsInScene[i])
+						{
+
+							m_ballsOutOfScene.push_back(m_ballsInScene[i]);
+							m_ballsInScene[i]->SetVelocity(glm::vec2(0));
+							m_ballsInScene[i]->SetAngularVelocity(0);
+							m_ballsInScene.erase(m_ballsInScene.begin() + i);
+
+							MoveBallLocation();
+						}
+					}
+
 				}
 				else
 					return false;
@@ -226,7 +249,7 @@ bool PhysicsProjectApp::HasBlackBallBeenSunk()
 		}
 	}
 
-	
+
 	return false;
 }
 
@@ -247,7 +270,7 @@ void PhysicsProjectApp::SpringTest()
 		glm::vec2(0), 0, 10, 42, 2);
 
 	//Ball's for the pool game
-	whiteBall = new Sphere(glm::vec2(-20, -20), glm::vec2(0), 1,
+	whiteBall = new Sphere(glm::vec2(-20, 0), glm::vec2(0), 1,
 		10, 2, glm::vec4(1, 1, 1, 1));
 	Sphere* filledBall1 = new Sphere(glm::vec2(36, -4), glm::vec2(0), 1,
 		10, 2, glm::vec4(1, 1, 0, 1));
@@ -359,38 +382,6 @@ void PhysicsProjectApp::SpringTest()
 		m_pockets[i]->SetTrigger(true);
 		m_physicsScene->AddActor(m_pockets[i]);
 	}
-
-
-	for (int j = 0; j < m_pockets.size(); j++)
-	{
-		m_pockets[j]->m_triggerEnter = [=](PhysicsObject* other)
-		{
-			for (int i = 0; i < m_ballsInScene.size(); i++)
-			{
-				if (other == whiteBall)
-				{
-					whiteBall->SetPosition(glm::vec2(0, 0));
-					whiteBall->SetVelocity(glm::vec2(0));
-					whiteBall->SetAngularVelocity(0);
-				}
-				else if (other == m_ballsInScene[i])
-				{
-
-					m_ballsOutOfScene.push_back(m_ballsInScene[i]);
-					m_ballsInScene[i]->SetVelocity(glm::vec2(0));
-					m_ballsInScene[i]->SetAngularVelocity(0);
-					m_ballsInScene.erase(m_ballsInScene.begin() + i);
-
-					MoveBallLocation();
-				}
-			}
-		};
-	}
-
-
-
-
-
 }
 
 void PhysicsProjectApp::DrawRect()

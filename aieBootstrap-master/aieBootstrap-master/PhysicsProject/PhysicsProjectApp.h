@@ -24,8 +24,10 @@ public:
 
 	void MoveBallLocation();
 
-	bool HasBlackBallBeenSunk();
+	bool DetectionOfShot();//This is incharge of the ruleset for the simulation
 
+	void DrawingAndShooting();
+	
 protected:
 
 	aie::Renderer2D*	m_2dRenderer;
@@ -39,10 +41,19 @@ protected:
 	Sphere* blackBall = nullptr;
 	std::vector<Sphere*> m_ballsInScene;
 	
-	std::vector<Sphere*> m_ballsOutOfScene;
+	//Dividing between the two different types of balls to sink.
+	std::vector<Sphere*> m_stripedBalls;
+	std::vector<Sphere*> m_solidBalls;
+
+
+	std::vector<Sphere*> m_stripedBallsOutOfScene;
+	std::vector<Sphere*> m_solidBallsOutOfScene;
 	std::vector<Sphere*> m_pockets;
 	bool mouseHasBeenPressed = false;
 	bool isItPlayer1sTurn;
+	bool hasABallBeenSunk;
+	bool p1SinksStriped;
+	bool p2SinksSolid;
 	bool firstHit;
 	bool hasHit;
 	bool blackBallHasSunk;
@@ -50,6 +61,5 @@ protected:
 
 
 public:
-	void SpringTest();
-	void DrawRect();
+	void LoadObjects();
 };

@@ -6,7 +6,8 @@
 #define MIN_ANGULAR_THRESHOLD 0.001f;
 
 Rigidbody::Rigidbody(ShapeType a_shapeID, glm::vec2 a_pos, 
-	glm::vec2 a_vel, float a_mass, float a_rot) : PhysicsObject(a_shapeID)
+	glm::vec2 a_vel, float a_mass, float a_rot) : PhysicsObject(a_shapeID),
+	m_moment(), m_localX(), m_localY()
 {
 	m_pos = a_pos;
 	m_vel = a_vel;

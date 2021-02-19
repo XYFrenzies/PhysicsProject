@@ -109,20 +109,20 @@ void PhysicsProjectApp::draw() {
 	{
 		if (hasABallBeenSunk == true && p1SinksStriped == true)
 		{
-			m_2dRenderer->drawText(m_font, "Player 1:", 150, 700);
+			m_2dRenderer->drawText(m_font, "Player 1:", 100, 700);
 		}
 		else if (hasABallBeenSunk == true && p1SinksStriped == false)
 		{
-			m_2dRenderer->drawText(m_font, "Player 1:", 750, 700);
+			m_2dRenderer->drawText(m_font, "Player 1:", 715, 700);
 		}
 
 		if (hasABallBeenSunk == true && p2SinksSolid == true)
 		{
-			m_2dRenderer->drawText(m_font, "Player 2:", 150, 700);
+			m_2dRenderer->drawText(m_font, "Player 2:", 100, 700);
 		}
 		else if (hasABallBeenSunk == true && p2SinksSolid == false)
 		{
-			m_2dRenderer->drawText(m_font, "Player 2:", 750, 700);
+			m_2dRenderer->drawText(m_font, "Player 2:", 715, 700);
 		}
 
 		if (isItPlayer1sTurn)
@@ -139,6 +139,21 @@ void PhysicsProjectApp::draw() {
 	}
 	else
 	{
+		if (m_stripedBallsOutOfScene.size() >= 7 || m_solidBallsOutOfScene.size() >= 7)
+		{
+			if(isItPlayer1sTurn == true)
+				m_2dRenderer->drawText(m_font, "Player 1 Wins!!!", 400, 500);
+			else
+				m_2dRenderer->drawText(m_font, "Player 2 Wins!!!", 400, 500);
+		}
+		else
+		{
+			m_2dRenderer->drawText(m_font, "You sunk the black ball before all the others!!!", 300, 400);
+			if (isItPlayer1sTurn == true)
+				m_2dRenderer->drawText(m_font, "Player 2 Wins!!!", 400, 500);
+			else
+				m_2dRenderer->drawText(m_font, "Player 1 Wins!!!", 400, 500);
+		}
 		m_2dRenderer->drawText(m_font, "GAME OVER", 300, 350);
 		m_2dRenderer->drawText(m_font, "Press ESC to quit", 300, 300);
 	}
@@ -175,23 +190,23 @@ glm::vec2 PhysicsProjectApp::ScreenToWorld(glm::vec2 a_screenPos)
 
 void PhysicsProjectApp::MoveBallLocation()
 {
-	int newLocStr = -48;
-	int newLocSol = 48;//For every ball thats been sunk.
+	int newLocStr = -54;
+	int newLocSol = 42;//For every ball thats been sunk.
 	//Loops through all the balls to dynamically cast it to a rigidbody and 
 	//to a position in a kinematic state.
 	for (unsigned int i = 0; i < m_stripedBallsOutOfScene.size(); i++)
 	{
-
+		
 		dynamic_cast<Rigidbody*>
 			(m_stripedBallsOutOfScene[i])->SetPosition(glm::vec2(newLocStr, 54));
-		newLocStr += 5;
+		newLocStr += 6;
 	}
 	for (unsigned int i = 0; i < m_solidBallsOutOfScene.size(); i++)
 	{
 
 		dynamic_cast<Rigidbody*>
 			(m_solidBallsOutOfScene[i])->SetPosition(glm::vec2(newLocSol, 54));
-		newLocSol += 5;
+		newLocSol += 6;
 	}
 }
 
@@ -211,7 +226,7 @@ bool PhysicsProjectApp::DetectionOfShot()
 			{
 				if (other == whiteBall)//If the white ball is in the trigger
 				{
-					whiteBall->SetPosition(glm::vec2(-20, 0));
+					whiteBall->SetPosition(glm::vec2(-35, 0));
 					whiteBall->SetVelocity(glm::vec2(0));
 					whiteBall->SetAngularVelocity(0);
 				}
@@ -337,17 +352,17 @@ void PhysicsProjectApp::LoadObjects()
 {
 	//Barriers for the pool table
 	Box* topLeftBarrier = new Box(glm::vec2(-48, 54.25f),
-		glm::vec2(0), 0, 10, 42, 2);
+		glm::vec2(0), 0, 10, 41, 3.5f);
 	Box* leftBarrier = new Box(glm::vec2(-98, (56.25f / 2) - 28),
-		glm::vec2(0), 0, 10, 2, 48);
+		glm::vec2(0), 0, 10, 3.5f, 47);
 	Box* bottomLeftBarrier = new Box(glm::vec2(-48, -54.25f),
-		glm::vec2(0), 0, 10, 42, 2);
+		glm::vec2(0), 0, 10, 41, 3.5f);
 	Box* topRightBarrier = new Box(glm::vec2(48, 54.25f),
-		glm::vec2(0), 0, 10, 42, 2);
+		glm::vec2(0), 0, 10, 41, 3.5f);
 	Box* rightBarrier = new Box(glm::vec2(98, (56.25f / 2) - 28),
-		glm::vec2(0), 0, 10, 2, 48);
+		glm::vec2(0), 0, 10, 3.5f, 47);
 	Box* bottomRightBarrier = new Box(glm::vec2(48, -54.25f),
-		glm::vec2(0), 0, 10, 42, 2);
+		glm::vec2(0), 0, 10, 41, 3.5f);
 
 	//Ball's for the pool game
 	whiteBall = new Sphere(glm::vec2(-35, 0), glm::vec2(0), 1,

@@ -1,9 +1,9 @@
 #include "GraphicsProjectApp.h"
 #include "Gizmos.h"
 #include "Input.h"
+#include "Planet.h"
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
-
 using glm::vec3;
 using glm::vec4;
 using glm::mat4;
@@ -23,7 +23,7 @@ bool GraphicsProjectApp::startup() {
 
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
-
+	Planets();
 	// create simple camera transforms
 	m_viewMatrix = glm::lookAt(vec3(10), vec3(0), vec3(0, 1, 0));
 	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, 16.0f / 9.0f, 0.1f, 1000.0f);
@@ -32,8 +32,9 @@ bool GraphicsProjectApp::startup() {
 }
 
 void GraphicsProjectApp::shutdown() {
-
 	Gizmos::destroy();
+	for (auto planet : m_planetsArray)
+		delete planet;
 }
 
 void GraphicsProjectApp::update(float deltaTime) {
@@ -41,6 +42,15 @@ void GraphicsProjectApp::update(float deltaTime) {
 	// wipe the gizmos clean for this frame
 	Gizmos::clear();
 
+	//m_planet->Update(deltaTime);
+	//m_planet->Draw();
+
+	for (auto planet : m_planetsArray)
+	{
+		planet->MakeGizmo();
+		if(planet->GetPosition() != glm::vec3(0, 0.5f, 0))
+			planet->Update(deltaTime);
+	}
 	// draw a simple grid with gizmos
 	vec4 white(1);
 	vec4 black(0, 0, 0, 1);
@@ -71,5 +81,16 @@ void GraphicsProjectApp::draw() {
 	// update perspective based on screen size
 	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.0f);
 
+
+
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
+}
+
+void GraphicsProjectApp::Planets()
+{
+	Planet* sun = new Planet({ 0, 0.5f, 0 }, 0, 1, 10, glm::vec4(1, 1, 0, 1));
+	sun->Draw();
+	Planet* mercury = new Planet({ 1, 0.5f, 0 }, 0, 0.5f, 10, glm::vec4(1,0,0,1), sun->GetPosition());
+	m_planetsArray.push_back(sun);
+	m_planetsArray.push_back(mercury);
 }

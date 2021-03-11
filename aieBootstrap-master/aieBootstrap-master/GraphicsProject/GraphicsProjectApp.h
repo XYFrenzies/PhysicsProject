@@ -6,6 +6,7 @@
 #include "Shader.h"
 #include "Mesh.h"
 #include "OBJMesh.h"
+#include "Camera.h"
 class GraphicsProjectApp : public aie::Application {
 public:
 
@@ -24,7 +25,8 @@ public:
 	void IMGUI_Logic();
 	void IMGUI_Transform();
 protected:
-
+	//Camera
+	Camera			   m_camera;
 	//====SHADER====
 	aie::ShaderProgram m_simpleShader;
 	aie::ShaderProgram m_bunnyShader;

@@ -10,7 +10,11 @@ using glm::vec4;
 using glm::mat4;
 using aie::Gizmos;
 
-GraphicsProjectApp::GraphicsProjectApp(): m_ambientLight(), m_bunnyTransform(), m_dragonTransform(), 
+GraphicsProjectApp::GraphicsProjectApp(): m_ambientLight(), 
+m_bunnyTransform(), m_bunnyRot(), m_bunnyScale(), m_bunnyTranslation(),
+m_dragonTransform(), m_dragonRot(), m_dragonScale(), m_dragonTranslation(),
+m_buddhaTransform(), m_buddhaRot(), m_buddhaScale(), m_buddhaTranslation(),
+m_lucyTransform(), m_lucyRot(), m_lucyScale(), m_lucyTranslation(),
 m_light(), m_planet(), m_projectionMatrix(), m_viewMatrix() 
 {
 
@@ -51,12 +55,12 @@ void GraphicsProjectApp::update(float deltaTime) {
 	//m_planet->Update(deltaTime);
 	//m_planet->Draw();
 
-	for (auto planet : m_planetsArray)
-	{
-		planet->MakeGizmo();
-		if(planet->GetPosition() != glm::vec3(0, 0.5f, 0))
-			planet->Update(deltaTime);
-	}
+	//for (auto planet : m_planetsArray)
+	//{
+	//	planet->MakeGizmo();
+	//	if(planet->GetPosition() != glm::vec3(0, 0.5f, 0))
+	//		planet->Update(deltaTime);
+	//}
 	// draw a simple grid with gizmos
 	vec4 white(1);
 	vec4 black(0, 0, 0, 1);
@@ -72,13 +76,15 @@ void GraphicsProjectApp::update(float deltaTime) {
 	// add a transform so that we can see the axis
 	Gizmos::addTransform(mat4(1));
 
+	m_camera.Update(deltaTime);
+
 	IMGUI_Logic();
 	IMGUI_Transform();
 	//Rotates the light direction per time variable.
 	float time = getTime();
 	m_light.direction = glm::normalize(glm::vec3(glm::cos(time * 2), glm::sin(time * 2), 0));
 	//Rotates the plane per update.
-	
+
 	//BunnyRotation
 	m_bunnyRot = glm::rotate(m_bunnyRot, deltaTime, glm::vec3(0, 1, 0));
 	m_bunnyTransform = m_bunnyTranslation * m_bunnyRot * m_bunnyScale;
@@ -103,13 +109,15 @@ void GraphicsProjectApp::draw() {
 
 	// wipe the screen to the background colour
 	clearScreen();
-	
+	glm::mat4 projectionMatrix = m_camera.GetProjectionMatrix(
+		(float)getWindowWidth(), (float)getWindowHeight());
+	glm::mat4 viewMatrix = m_camera.GetViewMatrix();
 	// update perspective based on screen size
-	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.0f);
+	//m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.0f);
 
-	DrawShadersAndMeshes(m_projectionMatrix, m_viewMatrix);
+	DrawShadersAndMeshes(projectionMatrix, viewMatrix);
 
-	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
+	Gizmos::draw(projectionMatrix * viewMatrix);
 }
 
 void GraphicsProjectApp::Planets()
@@ -394,8 +402,10 @@ void GraphicsProjectApp::IMGUI_Logic()
 
 void GraphicsProjectApp::IMGUI_Transform()
 {
-	ImGui::Begin("Scene Light Settings");
-	ImGui::DragFloat3("Sunlight Direction", &m_light.direction[0], 0.1f, -1.0f, -1.0f);
-	ImGui::DragFloat3("Sunlight Colour", &m_light.colour[0], 0.1f, 0.0f, 2.0f);
+	ImGui::Begin("Object Transform");
+	ImGui::DragFloat3("Bunny Movement", &m_bunnyTranslation[3][0], 0.1f, -15.0f, 15.0f);
+	ImGui::DragFloat3("Dragon Movement", &m_dragonTranslation[3][0], 0.1f, -15.0f, 15.0f);
+	ImGui::DragFloat3("Buddha Movement", &m_buddhaTranslation[3][0], 0.1f, -15.0f, 15.0f);
+	ImGui::DragFloat3("Lucy Movement", &m_lucyTranslation[3][0], 0.1f, -15.0f, 15.0f);
 	ImGui::End();
 }

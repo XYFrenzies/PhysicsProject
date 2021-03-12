@@ -20,13 +20,19 @@ public:
 	virtual void draw();
 
 	void Planets();
+
 	bool LoadShaderAndMesh();
 	void DrawShadersAndMeshes(glm::mat4, glm::mat4);
 	void IMGUI_Logic();
 	void IMGUI_Transform();
+	void IMGUI_AddCamera();
+	void AddCamera();
 protected:
 	//Camera
 	Camera			   m_camera;
+	std::vector<Camera> m_multipleCameras;
+	float numOfCamerasInScene = 2;
+	float camValue = 0;
 	//====SHADER====
 	aie::ShaderProgram m_simpleShader;
 	aie::ShaderProgram m_bunnyShader;
@@ -34,7 +40,11 @@ protected:
 	aie::ShaderProgram m_buddhaShader;
 	aie::ShaderProgram m_lucyShader;
 	aie::ShaderProgram m_phongShader;
+	aie::ShaderProgram m_textureShader;
+	aie::ShaderProgram m_normalMapShader;
 	//===================
+	//Texture
+	aie::Texture		m_gridTexture;
 	//Basic Plane
 	Mesh				m_quadMesh;
 	glm::mat4			m_quadTransform = glm::mat4(0);
@@ -69,6 +79,12 @@ protected:
 	// planets
 	Planet* m_planet;
 	std::vector<Planet*> m_planetsArray;
+	//Create a soulspear
+	aie::OBJMesh		m_spearMesh;
+	glm::mat4			m_spearTransform;
+	//Creae a lightsaber
+	aie::OBJMesh		m_lightSaberMesh;
+	glm::mat4			m_lightSaberTransform;
 
 	struct Light 
 	{

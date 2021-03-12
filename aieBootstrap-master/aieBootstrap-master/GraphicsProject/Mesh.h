@@ -10,7 +10,7 @@ public:
 	{
 		glm::vec4 position;
 		glm::vec4 normal;
-		glm::vec2 textCoord;
+		glm::vec2 texCoord;
 	};
 	void InitialiseQuad();
 	void Initialise(unsigned int a_vertexCount, 

@@ -18,7 +18,7 @@ private:
 	float m_lastMouseX,
 		  m_lastMouseY;
 	float cameraSpeed = 5.0f;
-	float cameraRotSpeed = 3.0f
+	float cameraRotSpeed = 3.0f;
 protected:
 };
 

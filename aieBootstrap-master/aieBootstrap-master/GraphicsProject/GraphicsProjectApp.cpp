@@ -346,9 +346,9 @@ bool GraphicsProjectApp::LoadShaderAndMesh()
 	}
 
 	m_lightSaberTransform = {
-		0.5f, 0, 0, 0,
-		0, 0.5f, 0, 0,
-		0, 0, 0.5f, 0,
+		0.1f, 0, 0, 0,
+		0, 0.1f, 0, 0,
+		0, 0, 0.1f, 0,
 		5, 0, 5, 1
 	};
 #pragma endregion

@@ -99,6 +99,7 @@ public:
 	bool bindUniform(const char* name, const glm::mat3& value);
 	bool bindUniform(const char* name, const glm::mat4& value);
 	bool bindUniform(const char* name, int count, int* value);
+	bool bindUniform(const char* name, int count, void* value);
 	bool bindUniform(const char* name, int count, float* value);
 	bool bindUniform(const char* name, int count, const glm::vec2* value);
 	bool bindUniform(const char* name, int count, const glm::vec3* value);

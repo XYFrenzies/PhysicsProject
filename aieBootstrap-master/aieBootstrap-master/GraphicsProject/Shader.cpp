@@ -236,6 +236,17 @@ bool ShaderProgram::bindUniform(const char* name, int count, int* value) {
 	glUniform1iv(i, count, value);
 	return true;
 }
+bool ShaderProgram::bindUniform(const char* name, int count, void* value) {
+	assert(m_program > 0 && "Invalid shader program");
+	int i = glGetUniformLocation(m_program, name);
+	if (i < 0) {
+		printf("Shader uniform [%s] not found! Is it being used?\n", name);
+		return false;
+	}	
+	glUniform1iv(i, count, (int*)value);
+	return true;
+}
+
 
 bool ShaderProgram::bindUniform(const char* name, int count, float* value) {
 	assert(m_program > 0 && "Invalid shader program");

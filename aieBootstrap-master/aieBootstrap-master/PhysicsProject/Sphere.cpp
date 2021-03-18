@@ -28,8 +28,6 @@ void Sphere::MakeGizmo()
 {
 
 	glm::vec2 end = glm::vec2(std::cos(m_rot), std::sin(m_rot)) * m_radius;
-
-
 	aie::Gizmos::add2DCircle(m_pos, m_radius, 100, m_colour);
 	aie::Gizmos::add2DLine(m_pos, m_pos + end, glm::vec4(1, 1, 1, 1));
 }

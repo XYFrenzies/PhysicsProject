@@ -18,9 +18,14 @@ public:
 		glm::vec3 a_scale, aie::OBJMesh* a_mesh, aie::ShaderProgram* a_shader);
 	void Draw(Scene* a_scene);
 	static glm::mat4 MakeTransform(glm::vec3 a_position, glm::vec3 a_eulerAngles, glm::vec3 a_scale);
+	void Update(float m_deltaTime);
+	glm::vec3& GetPosition() { return m_pos; }
 protected:
 	glm::mat4 m_transform;
 	aie::OBJMesh* m_mesh;
 	aie::ShaderProgram* m_shader;
+	glm::vec3 m_pos = glm::vec3(0);
+	glm::vec3 m_rot = glm::vec3(0);
+	glm::vec3 m_scale = glm::vec3(1);
 };
 

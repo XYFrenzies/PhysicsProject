@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include "OBJMesh.h"
 #include "Camera.h"
+#include "Scene.h"
 class GraphicsProjectApp : public aie::Application {
 public:
 
@@ -21,21 +22,18 @@ public:
 
 	void Planets();
 
-	bool LoadShaderAndMesh();
-	void DrawShadersAndMeshes(glm::mat4, glm::mat4);
+	bool LoadShaderAndMesh(Light a_light);
 	void IMGUI_Logic();
 	void IMGUI_Transform();
 	void IMGUI_AddCamera();
 	void AddCamera();
 protected:
 	//Camera
-	Camera			   m_camera;
 	std::vector<Camera> m_multipleCameras;
 	float numOfCamerasInScene = 2;
 	float camValue = 0;
 	//====SHADER====
 	aie::ShaderProgram m_simpleShader;
-	aie::ShaderProgram m_phongShader;
 	aie::ShaderProgram m_textureShader;
 	aie::ShaderProgram m_normalMapShader;
 	//===================
@@ -57,12 +55,8 @@ protected:
 	aie::OBJMesh		m_lightSaberMesh;
 	glm::mat4			m_lightSaberTransform;
 
-	struct Light 
-	{
-		glm::vec3 direction;
-		glm::vec3 colour;
-	};
 	std::vector<Light> m_lights;
 	int numLights = 2;
-	glm::vec3			m_ambientLight;
+
+	Scene* m_scene;
 };

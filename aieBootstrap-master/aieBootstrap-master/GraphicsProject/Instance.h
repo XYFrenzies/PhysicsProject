@@ -20,6 +20,9 @@ public:
 	static glm::mat4 MakeTransform(glm::vec3 a_position, glm::vec3 a_eulerAngles, glm::vec3 a_scale);
 	void Update(float m_deltaTime);
 	glm::vec3& GetPosition() { return m_pos; }
+	glm::vec3& GetRotation() { return m_rot; }
+	glm::vec3& GetScale() { return m_scale; }
+
 protected:
 	glm::mat4 m_transform;
 	aie::OBJMesh* m_mesh;

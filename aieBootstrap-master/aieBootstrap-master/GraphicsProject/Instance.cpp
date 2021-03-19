@@ -17,6 +17,10 @@ Instance::Instance(glm::vec3 a_position, glm::vec3 a_eularAngles, glm::vec3 a_sc
 	aie::OBJMesh* a_mesh, aie::ShaderProgram* a_shader)
 	: m_mesh(a_mesh), m_shader(a_shader)
 {
+	m_pos = a_position;
+	m_rot = a_eularAngles;
+	m_scale = a_scale;
+	m_shader = a_shader;
 	m_transform = MakeTransform(a_position, a_eularAngles, a_scale);
 }
 

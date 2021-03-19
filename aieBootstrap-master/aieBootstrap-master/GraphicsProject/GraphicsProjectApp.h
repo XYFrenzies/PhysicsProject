@@ -34,13 +34,17 @@ protected:
 	float numOfCamerasInScene = 2;
 	int camValue = 0;
 	//====SHADER====
+	aie::ShaderProgram m_bunnyShader;
+	aie::ShaderProgram m_phongShader;
 	aie::ShaderProgram m_normalMapShader;
 	//===================
+	//Create a bunny with transforms and positions
+	aie::OBJMesh		m_bunnyMesh;
+	glm::mat4			m_bunnyTransform;
 	// Camera transforms
 	glm::mat4	m_viewMatrix;
 	glm::mat4	m_projectionMatrix;
 	// planets
-	Planet* m_planet;
 	std::vector<Planet*> m_planetsArray;
 	//Create a SoulSpear
 	aie::OBJMesh		m_spearMesh;
@@ -48,5 +52,6 @@ protected:
 	//Create a Lightsaber
 	aie::OBJMesh		m_lightSaberMesh;
 	glm::mat4			m_lightSaberTransform;
-
+	float m_rotationValue = 0;
+	glm::vec3 newDirection = glm::vec3(0);
 };

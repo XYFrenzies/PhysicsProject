@@ -14,8 +14,10 @@ using glm::mat4;
 using aie::Gizmos;
 
 GraphicsProjectApp::GraphicsProjectApp() : m_projectionMatrix(), m_viewMatrix(), m_spearTransform(),
-m_scene(), m_lightSaberTransform()
+m_scene(), m_sideWinderTransform()
 {//Creates a set amount of cameras to begin with.
+	Camera newCam;
+	m_multipleCameras.push_back(newCam);
 	Camera cam;
 	cam.SetStaticCam();
 	m_multipleCameras.push_back(cam);
@@ -26,8 +28,7 @@ m_scene(), m_lightSaberTransform()
 	cam.SetPosition(glm::vec3(0, 10, 0));
 	m_multipleCameras.push_back(cam);
 
-	Camera newCam;
-	m_multipleCameras.push_back(newCam);
+
 }
 
 GraphicsProjectApp::~GraphicsProjectApp() {
@@ -153,18 +154,6 @@ bool GraphicsProjectApp::LoadShaderAndMesh(Light a_light)
 		return false;
 	}
 #pragma endregion
-#pragma region BunnyShader
-	m_bunnyShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/simple.vert");
-
-	//Load the fragment shader from the file
-	m_bunnyShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/simple.frag");
-	if (!m_bunnyShader.link())
-	{
-		printf("Bunny Shader had an error: %s\n", m_bunnyShader.getLastError());
-		return false;
-	}
-#pragma endregion
-
 #pragma endregion
 
 #pragma region Mesh Logic
@@ -182,18 +171,18 @@ bool GraphicsProjectApp::LoadShaderAndMesh(Light a_light)
 		0, 0, 0, 1
 	};
 #pragma endregion
-#pragma region LightSaber
-	if (!m_lightSaberMesh.load("./lightsaber/KKls.obj", true))
+#pragma region SideWinder
+	if (!m_sideWinderMesh.load("./sidewinder/Sidewinder_tris.obj", true, true))
 	{
-		printf("LightSaber Mesh has had an error.");
+		printf("SideWinder Mesh has had an error.");
 		return false;
 	}
 
-	m_lightSaberTransform = {
-		0.1f, 0, 0, 0,
-		0, 0.1f, 0, 0,
-		0, 0, 0.1f, 0,
-		5, 0, 5, 1
+	m_sideWinderTransform = {
+		0.01f, 0, 0, 0,
+		0, 0.01f, 0, 0,
+		0, 0, 0.01f, 0,
+		5, 1, 5, 1
 	};
 #pragma endregion
 #pragma region BunnyLogic
@@ -225,11 +214,11 @@ bool GraphicsProjectApp::LoadShaderAndMesh(Light a_light)
 			m_spearTransform[1][1], m_spearTransform[2][2]),
 		&m_spearMesh, &m_normalMapShader));
 	//Creates an instance of the lightSaber with a set position, rotation and scale.
-	m_scene->AddInstance(new Instance(glm::vec3(glm::vec3(m_lightSaberTransform[3][0],
-		m_lightSaberTransform[3][1], m_lightSaberTransform[3][2])),
-		glm::vec3(0, 30, 0), glm::vec3(m_lightSaberTransform[0][0],
-			m_lightSaberTransform[1][1], m_lightSaberTransform[2][2]),
-		&m_lightSaberMesh, &m_normalMapShader));
+	m_scene->AddInstance(new Instance(glm::vec3(glm::vec3(m_sideWinderTransform[3][0],
+		m_sideWinderTransform[3][1], m_sideWinderTransform[3][2])),
+		glm::vec3(0, 30, 0), glm::vec3(m_sideWinderTransform[0][0],
+			m_sideWinderTransform[1][1], m_sideWinderTransform[2][2]),
+		&m_sideWinderMesh, &m_normalMapShader));
 	//Creates an instance of the bunny with a set position, rotation and scale.
 	m_scene->AddInstance(new Instance(glm::vec3(glm::vec3(m_bunnyTransform[3][0],
 		m_bunnyTransform[3][1], m_bunnyTransform[3][2])),
@@ -289,21 +278,25 @@ void GraphicsProjectApp::IMGUI_AddCamera()
 		Camera cam;
 		m_multipleCameras.push_back(cam);
 	}
-	if (ImGui::Button("Static Camera X"))
+	if (ImGui::Button((std::string("Dynamic Camera ") + std::to_string(1)).c_str()))
 	{
 		camValue = 0;
 	}
-	if (ImGui::Button("Static Camera Y"))
-	{
-		camValue = 2;
-	}
-	if (ImGui::Button("Static Camera Z"))
+	if (ImGui::Button("Static Camera X"))
 	{
 		camValue = 1;
 	}
-	for (size_t i = 3; i < m_multipleCameras.size(); i++)
+	if (ImGui::Button("Static Camera Y"))
 	{
-		if (ImGui::Button((std::string("Dynamic Camera ") + std::to_string(i)).c_str()))
+		camValue = 3;
+	}
+	if (ImGui::Button("Static Camera Z"))
+	{
+		camValue = 2;
+	}
+	for (size_t i = 4; i < m_multipleCameras.size(); i++)
+	{
+		if (ImGui::Button((std::string("Dynamic Camera ") + std::to_string(i - 2)).c_str()))
 		{
 			camValue = i;
 		}

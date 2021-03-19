@@ -32,7 +32,6 @@ protected:
 	float numOfCamerasInScene = 4;
 	int camValue = 0;
 	//====SHADER====
-	aie::ShaderProgram m_bunnyShader;
 	aie::ShaderProgram m_phongShader;
 	aie::ShaderProgram m_normalMapShader;
 	//===================
@@ -46,8 +45,8 @@ protected:
 	aie::OBJMesh		m_spearMesh;
 	glm::mat4			m_spearTransform;
 	//Create a Lightsaber
-	aie::OBJMesh		m_lightSaberMesh;
-	glm::mat4			m_lightSaberTransform;
+	aie::OBJMesh		m_sideWinderMesh;
+	glm::mat4			m_sideWinderTransform;
 	glm::vec3 m_rotationSpeed = glm::vec3(0,0,0);
 	float m_rotationDistance = 1;
 	glm::vec3 newDirection = glm::vec3(0);

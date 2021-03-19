@@ -172,6 +172,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="OBJMesh.cpp" />
+    <ClCompile Include="ParticleEmmiter.cpp" />
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="Instance.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OBJMesh.h" />
+    <ClInclude Include="ParticleEmmiter.h" />
     <ClInclude Include="Planet.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />

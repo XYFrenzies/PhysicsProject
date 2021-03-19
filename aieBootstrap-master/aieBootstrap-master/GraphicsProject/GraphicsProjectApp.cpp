@@ -16,11 +16,18 @@ using aie::Gizmos;
 GraphicsProjectApp::GraphicsProjectApp() : m_projectionMatrix(), m_viewMatrix(), m_spearTransform(),
 m_scene(), m_lightSaberTransform()
 {//Creates a set amount of cameras to begin with.
-	for (int i = 0; i < numOfCamerasInScene; i++)
-	{
-		Camera cam;
-		m_multipleCameras.push_back(cam);
-	}
+	Camera cam;
+	cam.SetStaticCam();
+	m_multipleCameras.push_back(cam);
+
+	cam.SetPosition(glm::vec3(0, 2, -10));
+	m_multipleCameras.push_back(cam);
+
+	cam.SetPosition(glm::vec3(0, 10, 0));
+	m_multipleCameras.push_back(cam);
+
+	Camera newCam;
+	m_multipleCameras.push_back(newCam);
 }
 
 GraphicsProjectApp::~GraphicsProjectApp() {
@@ -33,7 +40,6 @@ bool GraphicsProjectApp::startup() {
 
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
-	Planets();
 	// create simple camera transforms
 	m_viewMatrix = glm::lookAt(vec3(10), vec3(0), vec3(0, 1, 0));
 	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f,
@@ -44,8 +50,6 @@ bool GraphicsProjectApp::startup() {
 
 void GraphicsProjectApp::shutdown() {
 	Gizmos::destroy();
-	for (auto planet : m_planetsArray)
-		delete planet;
 	delete m_scene;
 }
 
@@ -54,13 +58,6 @@ void GraphicsProjectApp::update(float deltaTime) {
 	// wipe the gizmos clean for this frame
 	Gizmos::clear();
 
-	//Updating and Drawing the position of the planets per frame.
-	for (auto planet : m_planetsArray)
-	{
-		planet->MakeGizmo();
-		if (planet->GetPosition() != glm::vec3(0, 0.5f, 0))
-			planet->Update(deltaTime);
-	}
 	// draw a simple grid with gizmos
 	vec4 white(1);
 	vec4 black(0, 0, 0, 1);
@@ -72,7 +69,7 @@ void GraphicsProjectApp::update(float deltaTime) {
 			vec3(-10, 0, -10 + i),
 			i == 10 ? white : black);
 	}
-
+	m_scene->SetAmbientLight(ambientLight);
 	// add a transform so that we can see the axis
 	Gizmos::addTransform(mat4(1));
 	aie::Input* input = aie::Input::getInstance();
@@ -92,17 +89,17 @@ void GraphicsProjectApp::update(float deltaTime) {
 	//Rotates the light direction per time variable.
 	float time = getTime();
 
-	Gizmos::addSphere(m_scene->GetPointLights()[0].m_direction, 0.25f, 8, 8,
+	Gizmos::addSphere(m_scene->GetPointLights()[0].m_direction , 0.25f, 8, 8,
 		glm::vec4(m_scene->GetPointLights()[0].m_color, 1));
 	Gizmos::addSphere(m_scene->GetPointLights()[1].m_direction, 0.25f, 8, 8,
 		glm::vec4(m_scene->GetPointLights()[1].m_color, 1));
-	Gizmos::addSphere(m_scene->GetPointLights()[2].m_direction * newDirection, 0.25f, 8, 8,
+	Gizmos::addSphere(m_scene->GetPointLights()[2].m_direction + offsetObject, 0.25f, 8, 8,
 		glm::vec4(m_scene->GetPointLights()[2].m_color, 1));
 	//Makes one of the spheres rotate in direction
 
-	m_scene->GetPointLights()[2].m_direction =
-		glm::normalize(glm::vec3(glm::cos(time * m_rotationValue), glm::sin(time * m_rotationValue), 0));
-
+	m_scene->GetPointLights()[2].m_direction.x = glm::cos(time * m_rotationSpeed.x) * m_rotationDistance;
+	m_scene->GetPointLights()[2].m_direction.y = glm::sin(time * m_rotationSpeed.y) * m_rotationDistance;
+	m_scene->GetPointLights()[2].m_direction.z = glm::sin(time * m_rotationSpeed.z) * m_rotationDistance;
 
 
 	//Updates all the instances of the objects in the scene with their position, rotation and scale.
@@ -133,15 +130,6 @@ void GraphicsProjectApp::draw() {
 	m_scene->Draw();
 	// update perspective based on screen size
 	Gizmos::draw(projectionMatrix * viewMatrix);
-}
-
-void GraphicsProjectApp::Planets()
-{
-	//Creates two instances of planets within the scene.
-	Planet* sun = new Planet({ 0, 0.5f, 0 }, 0, 1, 0, glm::vec4(1, 1, 0, 1));
-	Planet* mercury = new Planet({ 1, 0.5f, 0 }, 3.0f, 0.2f, 10, glm::vec4(1, 0, 0, 1));
-	m_planetsArray.push_back(sun);
-	m_planetsArray.push_back(mercury);
 }
 bool GraphicsProjectApp::LoadShaderAndMesh(Light a_light)
 {
@@ -195,7 +183,7 @@ bool GraphicsProjectApp::LoadShaderAndMesh(Light a_light)
 	};
 #pragma endregion
 #pragma region LightSaber
-	if (!m_lightSaberMesh.load("./lightsaber/KKls.obj", true, true))
+	if (!m_lightSaberMesh.load("./lightsaber/KKls.obj", true))
 	{
 		printf("LightSaber Mesh has had an error.");
 		return false;
@@ -253,7 +241,7 @@ bool GraphicsProjectApp::LoadShaderAndMesh(Light a_light)
 	m_scene->GetPointLights().push_back(Light(vec3(5, 3, 0), vec3(1, 0, 0), 50));
 	//Adding a green light to the right of the scene
 	m_scene->GetPointLights().push_back(Light(vec3(-5, 3, 0), vec3(0, 1, 0), 50));
-
+	//Adding a blue light to the middle of the scene
 	m_scene->GetPointLights().push_back(Light(vec3(5, 3, 5), vec3(0, 0, 1), 50));
 
 #pragma endregion
@@ -269,8 +257,11 @@ void GraphicsProjectApp::IMGUI_Logic()
 		ImGui::DragFloat3((std::string("PointLight Colour ") + std::to_string(i)).c_str(),
 			&m_scene->GetPointLights()[i].m_color[0], 0.1f, 0.0f, 50.0f);
 	}
-	ImGui::DragFloat("Sunlight RotationSpeed 2", &m_rotationValue, 0.1f, 0.0f, 50.0f);
-	ImGui::DragFloat3("PointLight Colour 2",&m_scene->GetPointLights()[2].m_color[0], 0.1f, 0.0f, 50.0f);
+	ImGui::DragFloat("Sunlight RotationDistance 2", &m_rotationDistance, 0.1f, 0.0f, 50.0f);
+	ImGui::DragFloat3("Sunlight Direction 2", &offsetObject[0], 0.1f, -50.0f, 50.0f);
+	ImGui::DragFloat3("Sunlight RotationSpeed 2", &m_rotationSpeed[0], 0.1f, 0.0f, 50.0f);
+	ImGui::DragFloat3("PointLight Colour 2", &m_scene->GetPointLights()[2].m_color[0], 0.1f, 0.0f, 50.0f);
+	ImGui::DragFloat3("Ambient Light", &ambientLight[0], 0.1f, 0.0f, 50.0f);
 	ImGui::End();
 }
 
@@ -293,14 +284,26 @@ void GraphicsProjectApp::IMGUI_Transform()
 void GraphicsProjectApp::IMGUI_AddCamera()
 {
 	ImGui::Begin("Camera Control");
-	if (ImGui::Button("Add Camera"))
+	if (ImGui::Button("Add Moving Camera"))
 	{
 		Camera cam;
 		m_multipleCameras.push_back(cam);
 	}
-	for (int i = 0; i < m_multipleCameras.size(); i++)
+	if (ImGui::Button("Static Camera X"))
 	{
-		if (ImGui::Button((std::string("New Camera ") + std::to_string(i)).c_str()))
+		camValue = 0;
+	}
+	if (ImGui::Button("Static Camera Y"))
+	{
+		camValue = 2;
+	}
+	if (ImGui::Button("Static Camera Z"))
+	{
+		camValue = 1;
+	}
+	for (size_t i = 3; i < m_multipleCameras.size(); i++)
+	{
+		if (ImGui::Button((std::string("Dynamic Camera ") + std::to_string(i)).c_str()))
 		{
 			camValue = i;
 		}

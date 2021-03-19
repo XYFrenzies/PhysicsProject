@@ -45,6 +45,7 @@ public:
 	glm::vec2 GetWindowSize() { return m_windowSize; }
 	Light& GetLight() { return m_light; }
 	glm::vec3 GetAmbientLight() { return m_ambientLight; }
+	glm::vec3 SetAmbientLight(glm::vec3 a_ambientLight) { return m_ambientLight = a_ambientLight; }
 protected:
 	friend class GraphicsProjectApp;
 	Camera* m_camera;

@@ -20,8 +20,6 @@ public:
 	virtual void update(float deltaTime);
 	virtual void draw();
 
-	void Planets();
-
 	bool LoadShaderAndMesh(Light a_light);
 	void IMGUI_Logic();
 	void IMGUI_Transform();
@@ -31,7 +29,7 @@ protected:
 	Scene* m_scene;
 	//Camera and the amount that is available
 	std::vector<Camera> m_multipleCameras;
-	float numOfCamerasInScene = 2;
+	float numOfCamerasInScene = 4;
 	int camValue = 0;
 	//====SHADER====
 	aie::ShaderProgram m_bunnyShader;
@@ -44,14 +42,16 @@ protected:
 	// Camera transforms
 	glm::mat4	m_viewMatrix;
 	glm::mat4	m_projectionMatrix;
-	// planets
-	std::vector<Planet*> m_planetsArray;
 	//Create a SoulSpear
 	aie::OBJMesh		m_spearMesh;
 	glm::mat4			m_spearTransform;
 	//Create a Lightsaber
 	aie::OBJMesh		m_lightSaberMesh;
 	glm::mat4			m_lightSaberTransform;
-	float m_rotationValue = 0;
+	glm::vec3 m_rotationSpeed = glm::vec3(0,0,0);
+	float m_rotationDistance = 1;
 	glm::vec3 newDirection = glm::vec3(0);
+	glm::vec3 ambientLight = glm::vec3(0);
+	glm::vec3 offsetObject = glm::vec3(0);
+
 };

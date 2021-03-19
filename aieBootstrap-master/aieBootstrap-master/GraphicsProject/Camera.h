@@ -7,10 +7,12 @@ public:
 	~Camera() {};
 	void Update(float a_deltaTime);
 	glm::vec3 GetPosition() { return m_position; }
+	glm::vec3 SetPosition(glm::vec3 a_position) 
+	{ return m_position = a_position; }
+	void SetStaticCam() { isCameraStatic = true; }
 
 	glm::mat4 GetViewMatrix();
 	glm::mat4 GetProjectionMatrix(float a_width, float a_height);
-
 private:
 	float m_theta; //In degrees
 	float m_phi;   //In degrees
@@ -19,6 +21,7 @@ private:
 		  m_lastMouseY;
 	float cameraSpeed = 5.0f;
 	float cameraRotSpeed = 3.0f;
+	bool isCameraStatic = false;
 protected:
 };
 

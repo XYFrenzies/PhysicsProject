@@ -8,6 +8,7 @@
 #include "OBJMesh.h"
 #include "Camera.h"
 #include "Scene.h"
+#include "ParticleEmmiter.h"
 class GraphicsProjectApp : public aie::Application {
 public:
 
@@ -34,6 +35,7 @@ protected:
 	//====SHADER====
 	aie::ShaderProgram m_phongShader;
 	aie::ShaderProgram m_normalMapShader;
+	aie::ShaderProgram m_particleShader;
 	//===================
 	//Create a bunny with transforms and positions
 	aie::OBJMesh		m_bunnyMesh;
@@ -53,4 +55,7 @@ protected:
 	glm::vec3 ambientLight = glm::vec3(0);
 	glm::vec3 offsetObject = glm::vec3(0);
 
+	//Particle emitter
+	ParticleEmmiter* m_emitter;
+	glm::mat4 m_particleTransform;
 };

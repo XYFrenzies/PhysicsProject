@@ -24,6 +24,12 @@ Instance::Instance(glm::vec3 a_position, glm::vec3 a_eularAngles, glm::vec3 a_sc
 	m_transform = MakeTransform(a_position, a_eularAngles, a_scale);
 }
 
+Instance::Instance(glm::mat4 a_transform, aie::ShaderProgram* a_shader): 
+	m_mesh(), m_shader(a_shader)
+{
+	m_transform = a_transform;
+}
+
 void Instance::Draw(Scene* a_scene)
 {
 	m_shader->bind();
@@ -31,7 +37,7 @@ void Instance::Draw(Scene* a_scene)
 		* a_scene->GetCamera()->GetViewMatrix() * m_transform;
 	//Bind the transform
 	m_shader->bindUniform("ProjectionViewModel", pvm);
-	m_shader->bindUniform("CameraPosition", a_scene->GetCamera()->GetPosition());//m_multipleCameras[camValue].GetPosition() FInd this equivilent
+	m_shader->bindUniform("CameraPosition", a_scene->GetCamera()->GetPosition());//Equivilent to m_multipleCameras[camValue].GetPosition() 
 	m_shader->bindUniform("AmbientColour", a_scene->GetAmbientLight());
 	m_shader->bindUniform("LightColor", a_scene->GetLight().m_color);
 	m_shader->bindUniform("LightDirection", a_scene->GetLight().m_direction);

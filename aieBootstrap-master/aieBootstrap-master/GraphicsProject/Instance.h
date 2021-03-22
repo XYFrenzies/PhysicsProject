@@ -16,6 +16,7 @@ public:
 	Instance(glm::mat4 a_transform, aie::OBJMesh* a_mesh, aie::ShaderProgram* a_shader);
 	Instance(glm::vec3 a_position, glm::vec3 a_eularAngles,
 		glm::vec3 a_scale, aie::OBJMesh* a_mesh, aie::ShaderProgram* a_shader);
+	Instance(glm::mat4 a_transform, aie::ShaderProgram* a_shader);
 	void Draw(Scene* a_scene);
 	static glm::mat4 MakeTransform(glm::vec3 a_position, glm::vec3 a_eulerAngles, glm::vec3 a_scale);
 	void Update(float m_deltaTime);

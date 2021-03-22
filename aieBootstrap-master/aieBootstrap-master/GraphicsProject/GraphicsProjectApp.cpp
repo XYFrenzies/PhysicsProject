@@ -14,7 +14,7 @@ using glm::mat4;
 using aie::Gizmos;
 
 GraphicsProjectApp::GraphicsProjectApp() : m_projectionMatrix(), m_viewMatrix(), m_spearTransform(),
-m_scene(), m_sideWinderTransform()
+m_scene(), m_sideWinderTransform(), m_bunnyTransform(), m_emitter()
 {//Creates a set amount of cameras to begin with.
 	Camera newCam;
 	m_multipleCameras.push_back(newCam);
@@ -45,13 +45,19 @@ bool GraphicsProjectApp::startup() {
 	m_viewMatrix = glm::lookAt(vec3(10), vec3(0), vec3(0, 1, 0));
 	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f,
 		(float)getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.0f);
+	//Creates an instance of a light source.
 	Light light;
+	//Creating a new emmiter
+	m_emitter = new ParticleEmmiter();
+	m_emitter->Initalise(1000, 10, 1.1f, 20.0f, 0.1f, 
+		1, 1, 0.1f, glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1));
 	return LoadShaderAndMesh(light);
 }
 
 void GraphicsProjectApp::shutdown() {
 	Gizmos::destroy();
 	delete m_scene;
+	delete m_emitter;
 }
 
 void GraphicsProjectApp::update(float deltaTime) {
@@ -102,7 +108,11 @@ void GraphicsProjectApp::update(float deltaTime) {
 	m_scene->GetPointLights()[2].m_direction.y = glm::sin(time * m_rotationSpeed.y) * m_rotationDistance;
 	m_scene->GetPointLights()[2].m_direction.z = glm::sin(time * m_rotationSpeed.z) * m_rotationDistance;
 
-
+	//The mat4 is the only issue im having with the emittion of the particles.
+	m_emitter->Update(time, glm::mat4(1, 0, 0, 0,
+										   0, 1, 0, 0,
+										   0, 0, 1, 0,
+		m_multipleCameras[camValue].GetPosition().x, m_multipleCameras[camValue].GetPosition().y, m_multipleCameras[camValue].GetPosition().z, 1));
 	//Updates all the instances of the objects in the scene with their position, rotation and scale.
 	for (auto instance : m_scene->m_instances)
 	{
@@ -129,6 +139,13 @@ void GraphicsProjectApp::draw() {
 		m_scene->SetCamera(&m_multipleCameras[(unsigned int)camValue]);
 	}
 	m_scene->Draw();
+	// bind particle shader
+	m_particleShader.bind();
+	// bind particle transform
+	auto pvm = m_projectionMatrix * m_viewMatrix * m_particleTransform;
+	m_particleShader.bindUniform("ProjectionViewModel", pvm);
+
+	m_emitter->Draw();
 	// update perspective based on screen size
 	Gizmos::draw(projectionMatrix * viewMatrix);
 }
@@ -154,6 +171,16 @@ bool GraphicsProjectApp::LoadShaderAndMesh(Light a_light)
 		return false;
 	}
 #pragma endregion
+#pragma region ParticleShader
+	m_particleShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/vertex.vert");
+	m_particleShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/vertex.frag");
+	if (m_particleShader.link() == false)
+	{
+		printf("Particle shader had an error %s\n", m_particleShader.getLastError());
+		return false;
+	}
+#pragma endregion
+
 #pragma endregion
 
 #pragma region Mesh Logic
@@ -168,7 +195,7 @@ bool GraphicsProjectApp::LoadShaderAndMesh(Light a_light)
 		1.0f, 0, 0, 0,
 		0, 1.0f, 0, 0,
 		0, 0, 1.0f, 0,
-		0, 0, 0, 1
+		-5, 1, 5, 1
 	};
 #pragma endregion
 #pragma region SideWinder
@@ -200,6 +227,17 @@ bool GraphicsProjectApp::LoadShaderAndMesh(Light a_light)
 		5, 0, -5, 1
 	};
 #pragma endregion
+#pragma region Particles
+
+	m_particleTransform =
+	{
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 1, 0, 1
+	};
+#pragma endregion
+
 #pragma endregion
 #pragma region LoadInstances
 
@@ -232,7 +270,6 @@ bool GraphicsProjectApp::LoadShaderAndMesh(Light a_light)
 	m_scene->GetPointLights().push_back(Light(vec3(-5, 3, 0), vec3(0, 1, 0), 50));
 	//Adding a blue light to the middle of the scene
 	m_scene->GetPointLights().push_back(Light(vec3(5, 3, 5), vec3(0, 0, 1), 50));
-
 #pragma endregion
 	return true;
 }

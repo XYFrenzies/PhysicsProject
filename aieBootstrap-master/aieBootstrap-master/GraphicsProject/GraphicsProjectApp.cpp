@@ -1,9 +1,11 @@
+#define	GLM_ENABLE_EXPERIMENTAL
 #include "GraphicsProjectApp.h"
 #include "Gizmos.h"
 #include "Input.h"
 #include "Planet.h"
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include <glm/gtx/transform.hpp>
 #include <ImGui.h>
 #include "Scene.h"
 #include "Instance.h"
@@ -95,7 +97,7 @@ void GraphicsProjectApp::update(float deltaTime) {
 
 	Camera cam = m_multipleCameras[(unsigned int)camValue];
 	//Updates the specific camera that is in the scene.
-	cam.Update(deltaTime);
+	m_multipleCameras[(unsigned int)camValue].Update(deltaTime);
 	IMGUI_Logic();
 	IMGUI_Transform();
 	IMGUI_AddCamera();
@@ -115,18 +117,18 @@ void GraphicsProjectApp::update(float deltaTime) {
 	m_scene->GetPointLights()[2].m_direction.z = glm::sin(time * m_rotationSpeed.z) * m_rotationDistance;
 
 
-	cameraTransform = glm::translate(cam.GetPosition()) *
-		glm::rotate(glm::mat4(1), cam.GetTheta(), glm::vec3(0, 0, 1)) *
-		glm::rotate(glm::mat4(1), cam.GetPhi(), glm::vec3(0, 1, 0)) *
-		glm::rotate(glm::mat4(1), cam.GetTheta(), glm::vec3(1, 0, 0)) *
+	cameraTransform = glm::translate(m_multipleCameras[(unsigned int)camValue].GetPosition()) *
+		glm::rotate(glm::mat4(1), m_multipleCameras[(unsigned int)camValue].GetTheta(), glm::vec3(0, 0, 1)) *
+		glm::rotate(glm::mat4(1),  m_multipleCameras[(unsigned int)camValue].GetPhi(), glm::vec3(0, 1, 0)) *
+		glm::rotate(glm::mat4(1),  m_multipleCameras[(unsigned int)camValue].GetTheta(), glm::vec3(1, 0, 0)) *
 		glm::scale(glm::mat4(1), glm::vec3(1));
 
 
 
-	)
+	
 
 	//The mat4 is the only issue im having with the emittion of the particles.
-	m_emitter->Update(time, glm::inverse(m_multipleCameras[camValue].GetWorldTransform()));
+	m_emitter->Update(time, cameraTransform);
 	//Updates all the instances of the objects in the scene with their position, rotation and scale.
 	for (auto instance : m_scene->m_instances)
 	{

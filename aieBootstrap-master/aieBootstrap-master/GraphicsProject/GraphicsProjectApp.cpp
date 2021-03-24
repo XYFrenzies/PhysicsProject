@@ -5,7 +5,6 @@
 #include "Planet.h"
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
-#include <glm/gtx/transform.hpp>
 #include <ImGui.h>
 #include "Scene.h"
 #include "Instance.h"
@@ -15,7 +14,7 @@ using glm::vec4;
 using glm::mat4;
 using aie::Gizmos;
 
-GraphicsProjectApp::GraphicsProjectApp() : m_projectionMatrix(), m_viewMatrix(), m_spearTransform(),
+GraphicsProjectApp::GraphicsProjectApp() : m_spearTransform(),
 m_scene(), m_sideWinderTransform(), m_bunnyTransform(), m_emitter()
 {//Creates a set amount of cameras to begin with.
 	Camera newCam;
@@ -46,12 +45,6 @@ bool GraphicsProjectApp::startup() {
 	}
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
-	// create simple camera transforms
-	m_multipleCameras[camValue].SetPerspective(glm::pi<float>() * 0.25f,
-		(float)getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.0f);
-	m_multipleCameras[camValue].SetLookAt(vec3(10), vec3(0), vec3(0, 1, 0));
-	//m_viewMatrix = glm::lookAt();
-	//m_projectionMatrix = glm::perspective();
 	//Creates an instance of a light source.
 	Light light;
 	//Creating a new emmiter
@@ -117,18 +110,8 @@ void GraphicsProjectApp::update(float deltaTime) {
 	m_scene->GetPointLights()[2].m_direction.z = glm::sin(time * m_rotationSpeed.z) * m_rotationDistance;
 
 
-	cameraTransform = glm::translate(m_multipleCameras[(unsigned int)camValue].GetPosition()) *
-		glm::rotate(glm::mat4(1), m_multipleCameras[(unsigned int)camValue].GetTheta(), glm::vec3(0, 0, 1)) *
-		glm::rotate(glm::mat4(1),  m_multipleCameras[(unsigned int)camValue].GetPhi(), glm::vec3(0, 1, 0)) *
-		glm::rotate(glm::mat4(1),  m_multipleCameras[(unsigned int)camValue].GetTheta(), glm::vec3(1, 0, 0)) *
-		glm::scale(glm::mat4(1), glm::vec3(1));
-
-
-
-	
-
 	//The mat4 is the only issue im having with the emittion of the particles.
-	m_emitter->Update(time, cameraTransform);
+	m_emitter->Update(time, m_multipleCameras[camValue].GetPosition());
 	//Updates all the instances of the objects in the scene with their position, rotation and scale.
 	for (auto instance : m_scene->m_instances)
 	{

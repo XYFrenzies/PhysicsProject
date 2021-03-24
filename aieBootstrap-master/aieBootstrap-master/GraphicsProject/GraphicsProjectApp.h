@@ -30,7 +30,6 @@ protected:
 	Scene* m_scene;
 	//Camera and the amount that is available
 	std::vector<Camera> m_multipleCameras;
-	glm::mat4 cameraTransform;
 	float numOfCamerasInScene = 4;
 	int camValue = 0;
 	//====SHADER====
@@ -41,9 +40,6 @@ protected:
 	//Create a bunny with transforms and positions
 	aie::OBJMesh		m_bunnyMesh;
 	glm::mat4			m_bunnyTransform;
-	// Camera transforms
-	glm::mat4	m_viewMatrix;
-	glm::mat4	m_projectionMatrix;
 	//Create a SoulSpear
 	aie::OBJMesh		m_spearMesh;
 	glm::mat4			m_spearTransform;

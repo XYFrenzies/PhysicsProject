@@ -24,9 +24,10 @@ void ParticleEmmiter::Initalise(unsigned int a_maxParticles,
 	float a_endSize, const glm::vec4& a_startColour, 
 	const glm::vec4& a_endColour)
 {
+	m_emitTimer = 0;
+	m_emitRate = 1.0f / a_emitRate;
 	//Initialising values on creation of a new particileEmmiter.
 	m_maxParticles = a_maxParticles;
-	m_emitRate = (float)a_emitRate;
 	m_lifespanMin = a_lifetimeMin;
 	m_lifespanMax = a_lifetimeMax;
 	m_velocityMin = a_velocityMin;
@@ -101,12 +102,12 @@ void ParticleEmmiter::Emit()
 	Particle& particle = m_particles[m_firstDead++];
 
 	//assign its starting position (original starting pos)
-	particle.position= m_position;
+	particle.position = m_position;
 
 	//randomise its lifespan (giving the effect of the particle movement.)
 	particle.lifeTime = 0;
 	particle.lifeSpan = (rand() / (float)RAND_MAX) *
-		(m_lifespanMax-m_lifespanMin) + m_lifespanMin;
+		(m_lifespanMax - m_lifespanMin) + m_lifespanMin;
 
 	//set starting size and colour
 	particle.colour = m_startColour;
@@ -114,14 +115,14 @@ void ParticleEmmiter::Emit()
 
 	// randomise velocity direction and strength
 	float velocity = (rand() / (float)RAND_MAX) * 
-		(m_velocityMax-m_velocityMin)+ m_velocityMin;
+		(m_velocityMax - m_velocityMin) + m_velocityMin;
 	particle.velocity.x = (rand() / (float)RAND_MAX) * 2 -1;
 	particle.velocity.y = (rand() / (float)RAND_MAX) * 2 -1;
 	particle.velocity.z = (rand() / (float)RAND_MAX) * 2 -1;
 	particle.velocity = glm::normalize(particle.velocity) * velocity;
 }
 
-void ParticleEmmiter::Update(float a_deltaTime, const glm::mat4& a_cameraTransform)
+void ParticleEmmiter::Update(float a_deltaTime, const glm::vec3& a_cameraTransform)
 {
 	using glm::vec3; 
 	using glm::vec4;
@@ -179,9 +180,8 @@ void ParticleEmmiter::Update(float a_deltaTime, const glm::mat4& a_cameraTransfo
 
 			//create billboard transform
 			//The billboard transform is the square looking particles.
-			vec3 zAxis = glm::normalize(vec3(a_cameraTransform[3]) 
-				- particle->position);
-			vec3 xAxis = glm::cross(vec3(a_cameraTransform[1]),
+			vec3 zAxis = glm::normalize(particle->position - vec3(a_cameraTransform));
+			vec3 xAxis = glm::cross(vec3(0,1,0),
 				zAxis);
 			vec3 yAxis = glm::cross(zAxis, xAxis);
 			glm::mat4 billboard(vec4(xAxis, 0),
@@ -189,18 +189,18 @@ void ParticleEmmiter::Update(float a_deltaTime, const glm::mat4& a_cameraTransfo
 								vec4(zAxis, 0),
 								vec4(0,0,0,1));
 
-			m_vertexData[quad* 4 + 0].position = 
+			m_vertexData[quad * 4 + 0].position = 
 				billboard * m_vertexData[quad* 4 + 0].position 
-				+ vec4(particle->position,0);
-			m_vertexData[quad* 4 + 1].position = 
+				+ vec4(particle->position, 0);
+			m_vertexData[quad * 4 + 1].position = 
 				billboard* m_vertexData[quad* 4 + 1].position + 
-				vec4(particle->position,0);
-			m_vertexData[quad* 4 + 2].position = 
+				vec4(particle->position, 0);
+			m_vertexData[quad * 4 + 2].position = 
 				billboard* m_vertexData[quad* 4 + 2].position +
-				vec4(particle->position,0);
-			m_vertexData[quad* 4 + 3].position =
+				vec4(particle->position, 0);
+			m_vertexData[quad * 4 + 3].position =
 				billboard* m_vertexData[quad* 4 + 3].position +
-				vec4(particle->position,0);
+				vec4(particle->position, 0);
 			//Increment the quad for every billboard/quad.
 			++quad;
 		}
@@ -216,5 +216,5 @@ void ParticleEmmiter::Draw()
 		4 *	sizeof(ParticleVertex), m_vertexData);
 	//draw particles
 	glBindVertexArray(m_vao);
-	glDrawElements(GL_TRIANGLES, m_firstDead * 6,GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, m_firstDead * 6, GL_UNSIGNED_INT, 0);
 }

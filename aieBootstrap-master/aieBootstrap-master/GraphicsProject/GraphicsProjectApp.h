@@ -30,6 +30,7 @@ protected:
 	Scene* m_scene;
 	//Camera and the amount that is available
 	std::vector<Camera> m_multipleCameras;
+	glm::mat4 cameraTransform;
 	float numOfCamerasInScene = 4;
 	int camValue = 0;
 	//====SHADER====

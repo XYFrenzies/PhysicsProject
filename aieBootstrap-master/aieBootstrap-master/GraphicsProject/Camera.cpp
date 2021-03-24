@@ -62,6 +62,17 @@ void Camera::Update(float a_deltaTime)
 	}
 }
 
+void Camera::SetPerspective(float a_fieldOfView, float a_aspectRatio, float a_near, float a_far)
+{
+	m_projectionTransform = glm::perspective(a_fieldOfView, 
+		a_aspectRatio, a_near, a_far);
+}
+
+void Camera::SetLookAt(glm::vec3 a_from, glm::vec3 a_to, glm::vec3 a_up)
+{
+	m_viewTransform = glm::lookAt(a_from, a_to, a_up);
+}
+
 glm::mat4 Camera::GetViewMatrix()
 {
 	float thetaR = glm::radians(m_theta);
@@ -74,9 +85,8 @@ glm::mat4 Camera::GetViewMatrix()
 		return glm::lookAt(m_position, glm::vec3(0) + forward, glm::vec3(0, 2, 0));
 }
 
-glm::mat4 Camera::GetProjectionMatrix(float a_width, float a_height)
+glm::mat4 Camera::GetProjectionMatrix()
 {
-	return glm::perspective(glm::pi<float>() * 0.25f,
-		a_width / a_height, 0.1f, 1000.0f);
+	return m_projectionTransform;
 }
 

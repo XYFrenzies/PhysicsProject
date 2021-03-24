@@ -33,7 +33,7 @@ Instance::Instance(glm::mat4 a_transform, aie::ShaderProgram* a_shader):
 void Instance::Draw(Scene* a_scene)
 {
 	m_shader->bind();
-	auto pvm = a_scene->GetCamera()->GetProjectionMatrix(a_scene->GetWindowSize().x, a_scene->GetWindowSize().y)
+	auto pvm = a_scene->GetCamera()->GetProjectionMatrix()
 		* a_scene->GetCamera()->GetViewMatrix() * m_transform;
 	//Bind the transform
 	m_shader->bindUniform("ProjectionViewModel", pvm);

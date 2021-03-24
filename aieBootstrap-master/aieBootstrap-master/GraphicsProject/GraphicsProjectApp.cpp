@@ -21,10 +21,8 @@ m_scene(), m_sideWinderTransform(), m_bunnyTransform(), m_emitter()
 	Camera cam;
 	cam.SetStaticCam();
 	m_multipleCameras.push_back(cam);
-
 	cam.SetPosition(glm::vec3(0, 2, -10));
 	m_multipleCameras.push_back(cam);
-
 	cam.SetPosition(glm::vec3(0, 10, 0));
 	m_multipleCameras.push_back(cam);
 
@@ -38,18 +36,25 @@ GraphicsProjectApp::~GraphicsProjectApp() {
 bool GraphicsProjectApp::startup() {
 
 	setBackgroundColour(0.25f, 0.25f, 0.25f);
-
+	for (int i = 0; i < m_multipleCameras.size(); i++)
+	{
+		m_multipleCameras[i].SetPerspective(glm::pi<float>() * 0.25f,
+			(float)getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.0f);
+		m_multipleCameras[i].SetLookAt(vec3(10), vec3(0), vec3(0, 1, 0));
+	}
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
 	// create simple camera transforms
-	m_viewMatrix = glm::lookAt(vec3(10), vec3(0), vec3(0, 1, 0));
-	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f,
+	m_multipleCameras[camValue].SetPerspective(glm::pi<float>() * 0.25f,
 		(float)getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.0f);
+	m_multipleCameras[camValue].SetLookAt(vec3(10), vec3(0), vec3(0, 1, 0));
+	//m_viewMatrix = glm::lookAt();
+	//m_projectionMatrix = glm::perspective();
 	//Creates an instance of a light source.
 	Light light;
 	//Creating a new emmiter
 	m_emitter = new ParticleEmmiter();
-	m_emitter->Initalise(1000, 10, 1.1f, 20.0f, 0.1f, 
+	m_emitter->Initalise(1000, 1, 1.1f, 20.0f, 0.1f, 
 		1, 1, 0.1f, glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1));
 	return LoadShaderAndMesh(light);
 }
@@ -88,8 +93,9 @@ void GraphicsProjectApp::update(float deltaTime) {
 	else if (input->wasKeyPressed(aie::INPUT_KEY_UP) && camValue >= m_multipleCameras.size() - 1)
 		camValue = 0;
 
+	Camera cam = m_multipleCameras[(unsigned int)camValue];
 	//Updates the specific camera that is in the scene.
-	m_multipleCameras[(unsigned int)camValue].Update(deltaTime);
+	cam.Update(deltaTime);
 	IMGUI_Logic();
 	IMGUI_Transform();
 	IMGUI_AddCamera();
@@ -108,11 +114,19 @@ void GraphicsProjectApp::update(float deltaTime) {
 	m_scene->GetPointLights()[2].m_direction.y = glm::sin(time * m_rotationSpeed.y) * m_rotationDistance;
 	m_scene->GetPointLights()[2].m_direction.z = glm::sin(time * m_rotationSpeed.z) * m_rotationDistance;
 
+
+	cameraTransform = glm::translate(cam.GetPosition()) *
+		glm::rotate(glm::mat4(1), cam.GetTheta(), glm::vec3(0, 0, 1)) *
+		glm::rotate(glm::mat4(1), cam.GetPhi(), glm::vec3(0, 1, 0)) *
+		glm::rotate(glm::mat4(1), cam.GetTheta(), glm::vec3(1, 0, 0)) *
+		glm::scale(glm::mat4(1), glm::vec3(1));
+
+
+
+	)
+
 	//The mat4 is the only issue im having with the emittion of the particles.
-	m_emitter->Update(time, glm::mat4(1, 0, 0, 0,
-										   0, 1, 0, 0,
-										   0, 0, 1, 0,
-		m_multipleCameras[camValue].GetPosition().x, m_multipleCameras[camValue].GetPosition().y, m_multipleCameras[camValue].GetPosition().z, 1));
+	m_emitter->Update(time, glm::inverse(m_multipleCameras[camValue].GetWorldTransform()));
 	//Updates all the instances of the objects in the scene with their position, rotation and scale.
 	for (auto instance : m_scene->m_instances)
 	{
@@ -129,20 +143,22 @@ void GraphicsProjectApp::draw() {
 
 	// wipe the screen to the background colour
 	clearScreen();
-	glm::mat4 projectionMatrix = m_multipleCameras[(unsigned int)camValue].GetProjectionMatrix(
-		(float)getWindowWidth(), (float)getWindowHeight());
+	
+	glm::mat4 projectionMatrix = m_multipleCameras[camValue].GetProjectionMatrix();
 	glm::mat4 viewMatrix = m_multipleCameras[(unsigned int)camValue].GetViewMatrix();
 	//Detemines if the current camera is the camera thats being used.
 	if (m_scene->GetCamera() != &m_multipleCameras[(unsigned int)camValue])
 	{
 		//If it isnt, we set the new camera.
+
 		m_scene->SetCamera(&m_multipleCameras[(unsigned int)camValue]);
 	}
 	m_scene->Draw();
 	// bind particle shader
 	m_particleShader.bind();
+
 	// bind particle transform
-	auto pvm = m_projectionMatrix * m_viewMatrix * m_particleTransform;
+	auto pvm = m_multipleCameras[camValue].GetProjectionViewMatrix() * m_particleTransform;
 	m_particleShader.bindUniform("ProjectionViewModel", pvm);
 
 	m_emitter->Draw();
@@ -336,6 +352,9 @@ void GraphicsProjectApp::IMGUI_AddCamera()
 		if (ImGui::Button((std::string("Dynamic Camera ") + std::to_string(i - 2)).c_str()))
 		{
 			camValue = i;
+			m_multipleCameras[camValue].SetPerspective(glm::pi<float>() * 0.25f,
+				(float)getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.0f);
+			m_multipleCameras[camValue].SetLookAt(vec3(10), vec3(0), vec3(0, 1, 0));
 		}
 	}
 	ImGui::End();

@@ -132,7 +132,7 @@ void ParticleEmmiter::Update(float a_deltaTime, const glm::mat4& a_cameraTransfo
 		Emit();
 		m_emitTimer -= m_emitRate;
 	}
-	unsigned int quad= 0;
+	unsigned int quad = 0;
 	//update particles and turn live particles into billboard quads
 	for (unsigned int i = 0; i < m_firstDead; i++)
 	{

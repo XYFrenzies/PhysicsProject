@@ -19,7 +19,7 @@ public:
 	glm::mat4 GetViewMatrix();
 	glm::mat4 GetProjectionMatrix();
 
-	glm::mat4 GetWorldTransform() { return m_worldTransform;}
+	glm::mat4 GetWorldTransform();
 
 	glm::mat4 GetProjectionViewMatrix() 
 	{ 

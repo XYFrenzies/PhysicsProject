@@ -49,8 +49,8 @@ bool GraphicsProjectApp::startup() {
 	Light light;
 	//Creating a new emmiter
 	m_emitter = new ParticleEmmiter();
-	m_emitter->Initalise(1000, 1, 1.1f, 20.0f, 0.1f, 
-		1, 1, 0.1f, glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1));
+	m_emitter->Initalise(1000, 500, 0.1f, 1.0f, 1.0f, 
+		5, 1, 0.1f, glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1));
 	return LoadShaderAndMesh(light);
 }
 
@@ -110,8 +110,9 @@ void GraphicsProjectApp::update(float deltaTime) {
 	m_scene->GetPointLights()[2].m_direction.z = glm::sin(time * m_rotationSpeed.z) * m_rotationDistance;
 
 
+
 	//The mat4 is the only issue im having with the emittion of the particles.
-	m_emitter->Update(time, m_multipleCameras[camValue].GetPosition());
+	m_emitter->Update(deltaTime, -m_multipleCameras[camValue].GetWorldTransform());
 	//Updates all the instances of the objects in the scene with their position, rotation and scale.
 	for (auto instance : m_scene->m_instances)
 	{

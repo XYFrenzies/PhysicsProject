@@ -90,3 +90,16 @@ glm::mat4 Camera::GetProjectionMatrix()
 	return m_projectionTransform;
 }
 
+glm::mat4 Camera::GetWorldTransform()
+{
+	glm::mat4& translation = glm::translate(glm::mat4(1), GetPosition());
+	glm::mat4& rotation = 
+		glm::rotate(glm::mat4(1), GetTheta(), glm::vec3(1, 0, 0)) * 
+		glm::rotate(glm::mat4(1), GetPhi(), glm::vec3(0, 1, 0)) * 
+		glm::rotate(glm::mat4(1), GetTheta(), glm::vec3(0, 0, 1));
+	glm::mat4& scale = glm::scale(glm::mat4(1), glm::vec3(1));
+
+
+	return translation * rotation * scale;
+}
+

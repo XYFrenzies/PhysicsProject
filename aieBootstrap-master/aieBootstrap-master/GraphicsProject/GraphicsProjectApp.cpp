@@ -112,7 +112,7 @@ void GraphicsProjectApp::update(float deltaTime) {
 
 
 	//The mat4 is the only issue im having with the emittion of the particles.
-	m_emitter->Update(deltaTime, -m_multipleCameras[camValue].GetWorldTransform());
+	m_emitter->Update(deltaTime, m_multipleCameras[camValue].GetWorldTransform());
 	//Updates all the instances of the objects in the scene with their position, rotation and scale.
 	for (auto instance : m_scene->m_instances)
 	{
@@ -144,7 +144,7 @@ void GraphicsProjectApp::draw() {
 	m_particleShader.bind();
 
 	// bind particle transform
-	auto pvm = m_multipleCameras[camValue].GetProjectionViewMatrix() * m_particleTransform;
+	auto pvm = projectionMatrix * viewMatrix  * m_particleTransform;
 	m_particleShader.bindUniform("ProjectionViewModel", pvm);
 
 	m_emitter->Draw();

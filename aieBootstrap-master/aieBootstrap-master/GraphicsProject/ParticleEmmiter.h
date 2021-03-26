@@ -26,7 +26,7 @@ public:
 		float a_velocityMin, float a_velocityMax, float a_startSize,
 		float a_endSize, const glm::vec4& a_startColour, const glm::vec4& a_endColour);
 	void Emit();
-	void Update(float a_deltaTime, const glm::mat4& a_cameraPVM);
+	void Update(float a_deltaTime, const glm::vec3 a_cameraPVM);
 	void Draw();
 protected:
 	Particle* m_particles;

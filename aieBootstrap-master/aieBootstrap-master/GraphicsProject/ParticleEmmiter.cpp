@@ -115,7 +115,7 @@ void ParticleEmmiter::Emit()
 	particle.velocity = glm::normalize(particle.velocity) * velocity;
 }
 
-void ParticleEmmiter::Update(float a_deltaTime, const glm::mat4& a_cameraPVM)
+void ParticleEmmiter::Update(float a_deltaTime, const glm::vec3 a_cameraPVM)
 {
 	using glm::vec3; 
 	using glm::vec4;
@@ -159,8 +159,8 @@ void ParticleEmmiter::Update(float a_deltaTime, const glm::mat4& a_cameraPVM)
 			m_vertexData[quad * 4 + 3].position= vec4(halfSize, -halfSize, 0, 1);
 			m_vertexData[quad * 4 + 3].colour= particle->colour;
 			// create billboard transform
-			vec3 zAxis= glm::normalize(vec3(a_cameraPVM[3]) - particle->position);
-			vec3 xAxis= glm::cross(vec3(a_cameraPVM[1]), zAxis); 
+			vec3 zAxis= glm::normalize(vec3(a_cameraPVM) - particle->position);
+			vec3 xAxis= glm::cross(vec3(0,1,0), zAxis); 
 			vec3 yAxis= glm::cross(zAxis, xAxis);
 			glm::mat4 billboard(
 				vec4(xAxis, 0), 

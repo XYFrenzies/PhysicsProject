@@ -109,10 +109,8 @@ void GraphicsProjectApp::update(float deltaTime) {
 	m_scene->GetPointLights()[2].m_direction.y = glm::sin(time * m_rotationSpeed.y) * m_rotationDistance;
 	m_scene->GetPointLights()[2].m_direction.z = glm::sin(time * m_rotationSpeed.z) * m_rotationDistance;
 
-
-
 	//The mat4 is the only issue im having with the emittion of the particles.
-	m_emitter->Update(deltaTime, m_multipleCameras[camValue].GetWorldTransform());
+	m_emitter->Update(deltaTime, m_multipleCameras[camValue].GetPosition());
 	//Updates all the instances of the objects in the scene with their position, rotation and scale.
 	for (auto instance : m_scene->m_instances)
 	{

@@ -25,6 +25,7 @@ public:
 	void IMGUI_Logic();
 	void IMGUI_Transform();
 	void IMGUI_AddCamera();
+	void IMGUI_Particle();
 protected:
 	//Scene
 	Scene* m_scene;
@@ -48,11 +49,14 @@ protected:
 	glm::mat4			m_sideWinderTransform;
 	glm::vec3 m_rotationSpeed = glm::vec3(0,0,0);
 	float m_rotationDistance = 1;
-	glm::vec3 newDirection = glm::vec3(0);
 	glm::vec3 ambientLight = glm::vec3(0);
 	glm::vec3 offsetObject = glm::vec3(0);
 
 	//Particle emitter
 	ParticleEmmiter* m_emitter;
 	glm::mat4 m_particleTransform;
+	glm::vec4 m_particleStartColour;
+	glm::vec4 m_particleEndColour;
+	float m_particleStartScale;
+	float m_particleEndScale;
 };

@@ -23,8 +23,8 @@ ParticleEmmiter::~ParticleEmmiter()
 void ParticleEmmiter::Initalise(unsigned int a_maxParticles, 
 	unsigned int a_emitRate, float a_lifetimeMin, float a_lifetimeMax, 
 	float a_velocityMin, float a_velocityMax, float a_startSize, 
-	float a_endSize, const glm::vec4& a_startColour, 
-	const glm::vec4& a_endColour)
+	float a_endSize,  glm::vec4& a_startColour, 
+	 glm::vec4& a_endColour)
 {
 	// set up emit timers
 	m_emitTimer = 0; 
@@ -115,13 +115,18 @@ void ParticleEmmiter::Emit()
 	particle.velocity = glm::normalize(particle.velocity) * velocity;
 }
 
-void ParticleEmmiter::Update(float a_deltaTime, const glm::vec3 a_cameraPVM)
+void ParticleEmmiter::Update(float a_deltaTime, const glm::vec3 a_cameraPVM, glm::vec4 a_startColour, glm::vec4 a_endColour, 
+	float a_startSize, float a_endSize)
 {
 	using glm::vec3; 
 	using glm::vec4;
 	//spawn particles
 	// spawn particles
+	m_startColour = a_startColour;
+	m_endColour = a_endColour;
 	m_emitTimer += a_deltaTime;
+	m_startSize = a_startSize;
+	m_endSize = a_endSize;
 	while(m_emitTimer > m_emitRate) 
 	{
 		Emit();

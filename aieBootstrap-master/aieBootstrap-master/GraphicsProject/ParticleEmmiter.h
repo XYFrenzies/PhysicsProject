@@ -24,10 +24,14 @@ public:
 	void Initalise(unsigned int a_maxParticles,
 		unsigned int a_emitRate, float a_lifetimeMin, float a_lifetimeMax,
 		float a_velocityMin, float a_velocityMax, float a_startSize,
-		float a_endSize, const glm::vec4& a_startColour, const glm::vec4& a_endColour);
+		float a_endSize,  glm::vec4& a_startColour,  glm::vec4& a_endColour);
 	void Emit();
-	void Update(float a_deltaTime, const glm::vec3 a_cameraPVM);
+	void Update(float a_deltaTime, const glm::vec3 a_cameraPVM, glm::vec4 a_startColour, 
+		glm::vec4 a_endColour, float a_startSize, float a_endSize);
 	void Draw();
+	glm::vec3 GetPosition() { return m_position; }
+	glm::vec4 GetStartColour() { return m_startColour; }
+	glm::vec4 GetEndColour() { return m_endColour; }
 protected:
 	Particle* m_particles;
 	unsigned int m_firstDead;

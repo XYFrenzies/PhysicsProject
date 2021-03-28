@@ -125,13 +125,14 @@ void ParticleEmmiter::Update(float a_deltaTime, const glm::vec3 a_cameraPVM, glm
 	m_startColour = a_startColour;
 	m_endColour = a_endColour;
 	m_emitTimer += a_deltaTime;
-	m_startSize = a_startSize;
-	m_endSize = a_endSize;
+	m_startSize = a_startSize;//Sets the size of the particles per frame.
+	m_endSize = a_endSize;//Sets the size of the particles per frame.
 	while(m_emitTimer > m_emitRate) 
 	{
 		Emit();
 		m_emitTimer -= m_emitRate;
-	}unsigned int quad= 0;
+	}
+	unsigned int quad= 0;
 	// update particles and turn live particles into billboard quads
 	for(unsigned int i= 0; i < m_firstDead; i++) 
 	{
@@ -144,12 +145,12 @@ void ParticleEmmiter::Update(float a_deltaTime, const glm::vec3 a_cameraPVM, glm
 			m_firstDead--;
 		}
 		else{
-			// move particle
+			// move particle in particular direction
 			particle->position += particle->velocity * a_deltaTime;
-			// size particle
+			// size particle over time
 			particle->size= glm::mix(m_startSize, m_endSize, 
 				particle->lifeTime / particle->lifeSpan);
-			// colour particle
+			// colour particle over time.
 			particle->colour= glm::mix(m_startColour, m_endColour, 
 				particle->lifeTime / particle->lifeSpan);
 
@@ -164,6 +165,7 @@ void ParticleEmmiter::Update(float a_deltaTime, const glm::vec3 a_cameraPVM, glm
 			m_vertexData[quad * 4 + 3].position= vec4(halfSize, -halfSize, 0, 1);
 			m_vertexData[quad * 4 + 3].colour= particle->colour;
 			// create billboard transform
+			//The location in world space for the camera to see the particles.
 			vec3 zAxis= glm::normalize(vec3(a_cameraPVM) - particle->position);
 			vec3 xAxis= glm::cross(vec3(0,1,0), zAxis); 
 			vec3 yAxis= glm::cross(zAxis, xAxis);
@@ -173,7 +175,8 @@ void ParticleEmmiter::Update(float a_deltaTime, const glm::vec3 a_cameraPVM, glm
 				vec4(zAxis,0),
 				vec4(0,0,0,1));
 
-
+			//Determines the position in world space for the vertex of the particles to be.
+			//(Checks all 4 corners.)
 			m_vertexData[quad * 4 + 0].position= billboard * 
 				m_vertexData[quad* 4 + 0].position+ vec4(particle->position,0);
 			m_vertexData[quad * 4 + 1].position= billboard *
@@ -183,6 +186,7 @@ void ParticleEmmiter::Update(float a_deltaTime, const glm::vec3 a_cameraPVM, glm
 			m_vertexData[quad * 4 + 3].position= billboard * 
 				m_vertexData[quad * 4 + 3].position+ vec4(particle->position,0);
 			
+			//Increments the quad.
 			++quad;
 		}
 	}

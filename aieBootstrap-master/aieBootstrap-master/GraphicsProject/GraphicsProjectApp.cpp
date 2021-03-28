@@ -2,7 +2,6 @@
 #include "GraphicsProjectApp.h"
 #include "Gizmos.h"
 #include "Input.h"
-#include "Planet.h"
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <ImGui.h>

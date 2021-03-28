@@ -1,7 +1,6 @@
 #pragma once
 #include "Application.h"
 #include <glm/mat4x4.hpp>
-#include "Planet.h"
 #include <vector>
 #include "Shader.h"
 #include "Mesh.h"
@@ -47,9 +46,12 @@ protected:
 	//Create a Lightsaber
 	aie::OBJMesh		m_sideWinderMesh;
 	glm::mat4			m_sideWinderTransform;
+	//Spotlight
 	glm::vec3 m_rotationSpeed = glm::vec3(0,0,0);
 	float m_rotationDistance = 1;
+	//Ambient light of the objects in scene
 	glm::vec3 ambientLight = glm::vec3(0);
+	//The movement of the sunlight in scene.
 	glm::vec3 offsetObject = glm::vec3(0);
 
 	//Particle emitter

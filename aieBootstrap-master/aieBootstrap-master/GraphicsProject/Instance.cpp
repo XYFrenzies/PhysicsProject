@@ -33,6 +33,7 @@ Instance::Instance(glm::mat4 a_transform, aie::ShaderProgram* a_shader):
 void Instance::Draw(Scene* a_scene)
 {
 	m_shader->bind();
+	//Coverts to world view.
 	auto pvm = a_scene->GetCamera()->GetProjectionMatrix()
 		* a_scene->GetCamera()->GetViewMatrix() * m_transform;
 	//Bind the transform
@@ -54,6 +55,7 @@ void Instance::Draw(Scene* a_scene)
 }
 glm::mat4 Instance::MakeTransform(glm::vec3 a_position, glm::vec3 a_eulerAngles, glm::vec3 a_scale)
 {
+	//Translates the objects into world space for the camera using the position, angles and scale.
 	return glm::translate(glm::mat4(1), a_position) * glm::rotate(glm::mat4(1), 
 		glm::radians(a_eulerAngles.z), glm::vec3(0, 0, 1))
 		* glm::rotate(glm::mat4(1), glm::radians(a_eulerAngles.y), glm::vec3(0, 1, 0))
@@ -63,5 +65,6 @@ glm::mat4 Instance::MakeTransform(glm::vec3 a_position, glm::vec3 a_eulerAngles,
 
 void Instance::Update(float m_deltaTime)
 {
+	//Everyframe, the object is updated for its position, rotation and scale.
 	m_transform = MakeTransform(m_pos, m_rot, m_scale);
 }

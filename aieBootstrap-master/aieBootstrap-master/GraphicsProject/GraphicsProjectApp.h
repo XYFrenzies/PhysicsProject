@@ -8,6 +8,9 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "ParticleEmmiter.h"
+//This file contains the main application for starting and shuting down the project.
+//Created by Benjamin McDonald on the 10th March 2021
+//Last accessed: 1st April 2021
 class GraphicsProjectApp : public aie::Application {
 public:
 

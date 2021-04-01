@@ -1,6 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
-
+//This file creates the instance of an object within world space and gets the information of their mesh and shader.
+//Created by Benjamin McDonald on the 18th March 2021
+//Last accessed: 1st April 2021
 class Camera;
 class Scene;
 

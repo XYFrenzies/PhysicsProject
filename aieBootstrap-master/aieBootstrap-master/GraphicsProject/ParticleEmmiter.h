@@ -1,6 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
-
+//This file contains the emission of particles with their position, colour and more changing over time.
+//Created by Benjamin McDonald on the 19th March 2021
+//Last accessed: 1st April 2021
 struct Particle 
 {
 	glm::vec3 position;

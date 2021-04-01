@@ -4,6 +4,9 @@
 #include <glm/glm.hpp>
 #include "OBJMesh.h"
 
+//This file contains the objects and lighting in the scene, the updates and the drawings of the objects.
+//Created by Benjamin McDonald on the 18th March 2021
+//Last accessed: 1st April 2021
 class Camera;
 class Instance;
 class GraphicsProjectApp;

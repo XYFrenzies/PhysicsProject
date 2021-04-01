@@ -1,6 +1,8 @@
 #pragma once
 #include "Application.h"
 #include <glm/glm.hpp>
+//Created by Benjamin McDonald on the 10th March 2021
+//Last accessed: 1st April 2021
 class Planet
 {
 public:
